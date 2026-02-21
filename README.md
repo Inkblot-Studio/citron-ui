@@ -60,15 +60,7 @@ Pushes to `main` automatically publish to npm via GitHub Actions. Version bumps 
 - **minor** – `feat:`
 - **major** – `feat!:`, `fix!:`, or `BREAKING CHANGE` in commit body
 
-**Setup (one-time):** Configure [Trusted Publisher](https://docs.npmjs.com/trusted-publishers) on npm for this repo. No `NPM_TOKEN` secret needed—OIDC handles auth.
-
-1. Go to [npmjs.com](https://www.npmjs.com/) → your package → Package settings → **Trusted Publishers**
-2. Click **Set up connection**
-3. Choose **GitHub Actions**
-4. Enter:
-   - **Organization or user:** `Inkblot-Studio` (or your GitHub org/user)
-   - **Repository:** `citron-ui`
-   - **Workflow filename:** `publish.yml`
+**Setup (one-time):** Add `NPM_TOKEN` as a repository secret in GitHub (Settings → Secrets and variables → Actions). Create an [Automation token](https://www.npmjs.com/access-tokens) at npmjs.com with publish permission for `@citron-systems`.
 
 ## Guidelines
 
