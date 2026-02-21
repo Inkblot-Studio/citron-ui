@@ -52,6 +52,24 @@ The build produces artifacts in the `dist` folder:
 
 Consumers must import the design system CSS and can optionally set `data-theme="dark"` on a parent element for dark mode. Ensure `react` and `react-dom` are peer dependencies in your project.
 
+## Publishing (CI/CD)
+
+Pushes to `main` automatically publish to npm via GitHub Actions. Version bumps follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- **patch** – `fix:`, `chore:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`
+- **minor** – `feat:`
+- **major** – `feat!:`, `fix!:`, or `BREAKING CHANGE` in commit body
+
+**Setup (one-time):** Configure [Trusted Publisher](https://docs.npmjs.com/trusted-publishers) on npm for this repo. No `NPM_TOKEN` secret needed—OIDC handles auth.
+
+1. Go to [npmjs.com](https://www.npmjs.com/) → your package → Package settings → **Trusted Publishers**
+2. Click **Set up connection**
+3. Choose **GitHub Actions**
+4. Enter:
+   - **Organization or user:** `Inkblot-Studio` (or your GitHub org/user)
+   - **Repository:** `citron-ui`
+   - **Workflow filename:** `publish.yml`
+
 ## Guidelines
 
 All new components **must** use semantic tokens from @citron-systems/citron-ds via CSS variables (e.g. `var(--inkblot-semantic-color-interactive-primary)`). Never use primitives or hardcoded colors. Follow the Principles of Radical Clarity and use semantic tokens for all states (hover, focus, disabled, error). Components automatically support dark mode when `[data-theme="dark"]` is applied.
