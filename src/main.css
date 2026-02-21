@@ -1,3 +1,40 @@
+@import '@citron-systems/citron-ds/css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[data-theme='dark'] {
+  --inkblot-semantic-color-background-primary: var(--inkblot-dark-color-background-primary);
+  --inkblot-semantic-color-background-secondary: var(--inkblot-dark-color-background-secondary);
+  --inkblot-semantic-color-background-tertiary: var(--inkblot-dark-color-background-tertiary);
+  --inkblot-semantic-color-background-inverse: var(--inkblot-dark-color-background-inverse);
+  --inkblot-semantic-color-text-primary: var(--inkblot-dark-color-text-primary);
+  --inkblot-semantic-color-text-secondary: var(--inkblot-dark-color-text-secondary);
+  --inkblot-semantic-color-text-tertiary: var(--inkblot-dark-color-text-tertiary);
+  --inkblot-semantic-color-text-inverse: var(--inkblot-dark-color-text-inverse);
+  --inkblot-semantic-color-text-link: var(--inkblot-dark-color-text-link);
+  --inkblot-semantic-color-text-link-hover: var(--inkblot-dark-color-text-link-hover);
+  --inkblot-semantic-color-border-default: var(--inkblot-dark-color-border-default);
+  --inkblot-semantic-color-border-strong: var(--inkblot-dark-color-border-strong);
+  --inkblot-semantic-color-border-focus: var(--inkblot-dark-color-border-focus);
+  --inkblot-semantic-color-interactive-primary: var(--inkblot-dark-color-interactive-primary);
+  --inkblot-semantic-color-interactive-primary-hover: var(--inkblot-dark-color-interactive-primary-hover);
+  --inkblot-semantic-color-interactive-primary-active: var(--inkblot-dark-color-interactive-primary-active);
+  --inkblot-semantic-color-interactive-secondary: var(--inkblot-dark-color-interactive-secondary);
+  --inkblot-semantic-color-interactive-secondary-hover: var(--inkblot-dark-color-interactive-secondary-hover);
+  --inkblot-semantic-color-status-success: var(--inkblot-dark-color-status-success);
+  --inkblot-semantic-color-status-warning: var(--inkblot-dark-color-status-warning);
+  --inkblot-semantic-color-status-error: var(--inkblot-dark-color-status-error);
+  --inkblot-semantic-color-status-info: var(--inkblot-dark-color-status-info);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

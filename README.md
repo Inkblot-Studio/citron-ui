@@ -4,7 +4,7 @@ The core UI component library for the company CRM. A collection of accessible, d
 
 ## Architecture
 
-The project uses a **Design Tokens** system based on JSON files located in `src/tokens`. These tokens define colors, typography, spacing, radius, and other design primitives. A build-time utility processes these JSON files, extracts the values, and injects them into the Tailwind CSS theme. All components consume these tokens exclusively, ensuring visual consistency across the CRM and alignment with the design system.
+The project consumes design tokens from the **@citron-systems/citron-ds** NPM package. The package provides CSS variables (e.g. `var(--inkblot-semantic-color-*)`) which are activated via `@import '@citron-systems/citron-ds/css'` in the main CSS entry point. All components use **semantic tokens only**—never primitives—ensuring automatic dark mode support via `[data-theme="dark"]` and alignment with WCAG AAA standards. Spacing and border-radius from the package are mapped into Tailwind's theme via `src/utils/inkblotTheme.ts`.
 
 ## Tech Stack
 
@@ -14,14 +14,14 @@ The project uses a **Design Tokens** system based on JSON files located in `src/
 - Tailwind CSS
 - Storybook (Vite builder)
 - tsup
+- @citron-systems/citron-ds
 
 ## Project Structure
 
 | Path | Purpose |
 |------|---------|
-| `src/tokens` | Design token JSON files. Contains primitive tokens (color, typography, spacing, radius) and semantic tokens. Source of truth for the design system. |
 | `src/components` | React components. Each component lives in its own folder with the component file and optional stories. |
-| `src/utils/tokenCleaner.ts` | Utility that imports the token JSON files, extracts raw values, and exports a clean object for Tailwind. Cleans the nested JSON structure into a format suitable for Tailwind's theme extension. |
+| `src/utils/inkblotTheme.ts` | Maps @citron-systems/citron-ds resolved tokens (Inkblot prefix) to Tailwind spacing and borderRadius. |
 | `src/index.ts` | Library entry point. Exports all public components and their types. |
 
 ## Development Workflow
@@ -50,8 +50,8 @@ The build produces artifacts in the `dist` folder:
 - `dist/index.mjs` (ESM)
 - `dist/index.d.ts` (TypeScript definitions)
 
-Consumers can import components and types from the package. Ensure `react` and `react-dom` are peer dependencies in your project.
+Consumers must import the design system CSS and can optionally set `data-theme="dark"` on a parent element for dark mode. Ensure `react` and `react-dom` are peer dependencies in your project.
 
 ## Guidelines
 
-All new components **must** use the design tokens from `src/tokens`. Do not use hardcoded Tailwind color classes such as `bg-blue-500` or arbitrary hex values. Use token-based classes (e.g. `bg-accent-citron-500`, `text-neutral-gray-900`, `border-neutral-gray-200`) so components stay aligned with the design system and benefit from future token updates.
+All new components **must** use semantic tokens from @citron-systems/citron-ds via CSS variables (e.g. `var(--inkblot-semantic-color-interactive-primary)`). Never use primitives or hardcoded colors. Follow the Principles of Radical Clarity and use semantic tokens for all states (hover, focus, disabled, error). Components automatically support dark mode when `[data-theme="dark"]` is applied.

@@ -10,9 +10,9 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-accent-citron-500 text-neutral-gray-900 hover:bg-accent-citron-600 active:bg-accent-citron-700 focus:ring-2 focus:ring-accent-citron-500 focus:ring-offset-2',
+    'bg-[var(--inkblot-semantic-color-interactive-primary)] text-[var(--inkblot-semantic-color-text-primary)] hover:bg-[var(--inkblot-semantic-color-interactive-primary-hover)] active:bg-[var(--inkblot-semantic-color-interactive-primary-active)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--inkblot-semantic-color-border-focus)] focus-visible:outline-offset-2 disabled:opacity-[var(--inkblot-opacity-disabled)] disabled:pointer-events-none disabled:cursor-not-allowed',
   secondary:
-    'bg-neutral-gray-100 text-neutral-gray-900 border border-neutral-gray-200 hover:bg-neutral-gray-200 hover:border-neutral-gray-300 active:bg-neutral-gray-200 focus:ring-2 focus:ring-accent-citron-500 focus:ring-offset-2',
+    'bg-[var(--inkblot-semantic-color-interactive-secondary)] text-[var(--inkblot-semantic-color-text-primary)] border border-[var(--inkblot-semantic-color-border-default)] hover:bg-[var(--inkblot-semantic-color-interactive-secondary-hover)] hover:border-[var(--inkblot-semantic-color-border-strong)] active:bg-[var(--inkblot-semantic-color-interactive-secondary-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--inkblot-semantic-color-border-focus)] focus-visible:outline-offset-2 disabled:opacity-[var(--inkblot-opacity-disabled)] disabled:pointer-events-none disabled:cursor-not-allowed',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -22,7 +22,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled}
         className={cn(
-          'inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
+          'inline-flex min-h-[var(--inkblot-size-touch-target-min)] items-center justify-center rounded-[var(--inkblot-radius-lg)] px-4 py-2 font-semibold transition-[background,border-color] duration-[var(--inkblot-duration-fast)] ease-[var(--inkblot-easing-default)]',
           variantStyles[variant],
           className
         )}
