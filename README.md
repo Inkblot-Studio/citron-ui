@@ -52,6 +52,16 @@ The build produces artifacts in the `dist` folder:
 
 Consumers must import the design system CSS and can optionally set `data-theme="dark"` on a parent element for dark mode. Ensure `react` and `react-dom` are peer dependencies in your project.
 
+## Publishing (CI/CD)
+
+Pushes to `main` automatically publish to npm via GitHub Actions. Version bumps follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- **patch** – `fix:`, `chore:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`
+- **minor** – `feat:`
+- **major** – `feat!:`, `fix!:`, or `BREAKING CHANGE` in commit body
+
+**Setup (one-time):** Add `NPM_TOKEN` as a repository secret in GitHub (Settings → Secrets and variables → Actions). Create an [Automation token](https://www.npmjs.com/access-tokens) at npmjs.com with publish permission for `@citron-systems`.
+
 ## Guidelines
 
 All new components **must** use semantic tokens from @citron-systems/citron-ds via CSS variables (e.g. `var(--inkblot-semantic-color-interactive-primary)`). Never use primitives or hardcoded colors. Follow the Principles of Radical Clarity and use semantic tokens for all states (hover, focus, disabled, error). Components automatically support dark mode when `[data-theme="dark"]` is applied.

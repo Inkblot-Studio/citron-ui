@@ -1,11 +1,18 @@
 {
   "name": "@citron-systems/citron-ui",
-  "private": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "description": "Core UI component library for Citron CRM. Accessible, design-token-driven React components built with consistency and scalability in mind.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -14,13 +21,31 @@
     "build": "tsup",
     "build-storybook": "storybook build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Inkblot-Studio/citron-ui.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "components",
+    "ui",
+    "design-system",
+    "citron",
+    "crm"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
+    "@citron-systems/citron-ds": "^1.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.1",
+    "@citron-systems/citron-ds": "^1.0.0",
     "@storybook/addon-a11y": "^10.2.10",
     "@storybook/addon-docs": "^10.2.10",
     "@storybook/addon-onboarding": "^10.2.10",
@@ -35,6 +60,8 @@
     "autoprefixer": "^10.4.24",
     "playwright": "^1.58.2",
     "postcss": "^8.5.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "storybook": "^10.2.10",
     "tailwindcss": "^3.4.19",
     "tsup": "^8.5.1",
