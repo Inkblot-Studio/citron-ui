@@ -1,6 +1,6 @@
 {
   "name": "@citron-systems/citron-ui",
-  "version": "1.1.0",
+  "version": "1.0.2",
   "description": "Core UI component library for Citron CRM. Accessible, design-token-driven React components built with consistency and scalability in mind.",
   "type": "module",
   "main": "dist/index.js",
@@ -73,8 +73,6 @@
     "@citron-systems/citron-ds": "^1.0.0",
     "lucide-react": "^0.460.0",
     "clsx": "^2.1.1",
-    "i": "^0.3.7",
-    "npm": "^11.10.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwind-merge": "^3.5.0"
