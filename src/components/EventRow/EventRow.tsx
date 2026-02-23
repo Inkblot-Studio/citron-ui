@@ -2,11 +2,13 @@ import { cn } from '../../utils/cn'
 import { StatusBadge, type StatusBadgeVariant } from '../StatusBadge'
 
 export interface CitronEvent {
+  id?: string
   actor: string
   subject: string
   event_type: string
   timestamp: string
   confidence_score: number
+  metadata?: Record<string, unknown>
 }
 
 export interface EventRowProps {

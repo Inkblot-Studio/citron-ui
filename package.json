@@ -16,7 +16,8 @@
   },
   "peerDependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.1",
@@ -43,6 +44,7 @@
   },
   "dependencies": {
     "@citron-systems/citron-ds": "^1.0.0",
+    "lucide-react": "^0.460.0",
     "clsx": "^2.1.1",
     "i": "^0.3.7",
     "npm": "^11.10.1",
