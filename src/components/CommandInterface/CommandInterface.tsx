@@ -1,59 +1,52 @@
 import type { ReactNode } from 'react'
+import { useRef } from 'react'
+import { Paperclip } from 'lucide-react'
 import { cn } from '../../utils/cn'
 
 export interface CommandInterfaceProps {
   promptValue?: string
   onPromptChange?: (value: string) => void
   onPromptSubmit?: () => void
+  onFilesAttach?: (files: File[]) => void
   isProcessing?: boolean
   response?: ReactNode
   placeholder?: string
+  accept?: string
+  multiple?: boolean
   className?: string
-}
-
-function AIAvatar({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn('h-8 w-8', className)}
-      aria-hidden
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="9"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        className="text-[var(--inkblot-semantic-color-text-tertiary)]"
-      />
-      <path
-        d="M8 12h2v2H8v-2zm6 0h2v2h-2v-2zM10 8l2 4 2-4"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-[var(--inkblot-semantic-color-text-secondary)]"
-      />
-    </svg>
-  )
 }
 
 export function CommandInterface({
   promptValue = '',
   onPromptChange,
   onPromptSubmit,
+  onFilesAttach,
   isProcessing = false,
   response,
   placeholder = 'Ask Citron Intelligence...',
+  accept,
+  multiple = true,
   className,
 }: CommandInterfaceProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onPromptSubmit?.()
     }
+  }
+
+  const handleAttachClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0 && onFilesAttach) {
+      onFilesAttach(Array.from(files))
+    }
+    e.target.value = ''
   }
 
   return (
@@ -64,11 +57,36 @@ export function CommandInterface({
       )}
     >
       <div className="flex flex-col gap-4">
-        <div className="flex items-start gap-4">
-          <div className="flex shrink-0 items-center justify-center">
-            <AIAvatar />
-          </div>
-          <div className="flex flex-1 flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="flex items-start gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={accept}
+              multiple={multiple}
+              onChange={handleFileChange}
+              className="sr-only"
+              aria-hidden
+            />
+            <button
+              type="button"
+              onClick={handleAttachClick}
+              disabled={isProcessing}
+              className={cn(
+                'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--inkblot-semantic-color-text-tertiary)] transition-colors duration-[var(--inkblot-duration-fast)]',
+                'hover:bg-[var(--inkblot-semantic-color-background-secondary)] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
+                'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]',
+                'disabled:pointer-events-none disabled:opacity-50'
+              )}
+              aria-label="Adjuntar archivos"
+            >
+              <Paperclip
+                size={20}
+                strokeWidth={1.5}
+                className="text-[var(--inkblot-semantic-color-text-tertiary)]"
+                aria-hidden
+              />
+            </button>
             <textarea
               value={promptValue}
               onChange={(e) => onPromptChange?.(e.target.value)}
@@ -77,7 +95,7 @@ export function CommandInterface({
               rows={3}
               disabled={isProcessing}
               className={cn(
-                'w-full resize-none rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)] transition-shadow duration-[var(--inkblot-duration-fast)]',
+                'min-w-0 flex-1 resize-none rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)] transition-shadow duration-[var(--inkblot-duration-fast)]',
                 'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]',
                 'shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.08)]',
                 'disabled:cursor-not-allowed disabled:opacity-70'
@@ -94,13 +112,8 @@ export function CommandInterface({
         />
       ) : response ? (
         <div className="flex flex-col gap-4">
-          <div className="flex items-start gap-4">
-            <div className="shrink-0">
-              <AIAvatar />
-            </div>
-            <div className="min-w-0 flex-1 text-[var(--inkblot-semantic-color-text-primary)]">
-              {response}
-            </div>
+          <div className="min-w-0 text-[var(--inkblot-semantic-color-text-primary)]">
+            {response}
           </div>
         </div>
       ) : null}

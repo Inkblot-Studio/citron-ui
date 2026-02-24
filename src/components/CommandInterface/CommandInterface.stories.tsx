@@ -26,6 +26,20 @@ export const WithPrompt: Story = {
   },
 }
 
+export const WithFileAttachment: Story = {
+  args: {
+    promptValue: '',
+    placeholder: 'Ask Citron Intelligence...',
+    onPromptChange: () => {},
+    onPromptSubmit: () => {},
+    onFilesAttach: (files) => {
+      console.log('Archivos adjuntados:', files.map((f) => f.name))
+      alert(`Archivos adjuntados: ${files.map((f) => f.name).join(', ')}`)
+    },
+    multiple: true,
+  },
+}
+
 export const Processing: Story = {
   args: {
     promptValue: 'Find contacts at Acme Corp',
