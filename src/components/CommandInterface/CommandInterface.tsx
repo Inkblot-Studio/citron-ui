@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useRef } from 'react'
-import { Paperclip, Send, Sparkles } from 'lucide-react'
+import { Loader2, Paperclip, Send, Sparkles } from 'lucide-react'
 import { cn } from '../../utils/cn'
 
 export interface CommandInterfaceProps {
@@ -56,7 +56,12 @@ export function CommandInterface({
         className
       )}
     >
-      <div className="flex items-center gap-[var(--inkblot-spacing-2)]">
+      <div
+        className={cn(
+          'flex items-center gap-[var(--inkblot-spacing-2)]',
+          isProcessing && 'pointer-events-none'
+        )}
+      >
         <input
           ref={fileInputRef}
           type="file"
@@ -90,6 +95,7 @@ export function CommandInterface({
           'relative flex min-w-0 flex-1 items-center gap-[var(--inkblot-spacing-2)] rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-background-primary)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)] shadow-[var(--inkblot-shadow-sm)]',
           'transition-shadow duration-[var(--inkblot-duration-fast)]'
         )}
+        aria-busy={isProcessing}
       >
         <div
           className="flex shrink-0 items-center opacity-[var(--inkblot-opacity-subtle)]"
@@ -114,34 +120,45 @@ export function CommandInterface({
             'disabled:cursor-not-allowed disabled:opacity-[var(--inkblot-opacity-disabled)]'
           )}
         />
-        <button
-          type="button"
-          onClick={onPromptSubmit}
-          disabled={isProcessing}
-          className={cn(
-            'absolute right-[var(--inkblot-spacing-2)] top-[var(--inkblot-spacing-2)] flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] text-[var(--inkblot-semantic-color-text-inverse)] transition-colors duration-[var(--inkblot-duration-fast)]',
-            'bg-[var(--inkblot-semantic-color-interactive-primary)] hover:bg-[var(--inkblot-semantic-color-interactive-primary-hover)] active:bg-[var(--inkblot-semantic-color-interactive-primary-active)]',
-            'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]',
-            'disabled:pointer-events-none disabled:opacity-[var(--inkblot-opacity-disabled)]'
-          )}
-          aria-label="Enviar"
-        >
-          <Send
-            size={16}
-            strokeWidth={2}
-            className="text-[var(--inkblot-semantic-color-text-inverse)]"
-            aria-hidden
-          />
-        </button>
-      </div>
-      </div>
-      {isProcessing ? (
         <div
           className={cn(
-            'min-h-[80px] animate-shimmer rounded-[var(--inkblot-radius-full)] bg-[length:200%_100%] bg-[linear-gradient(90deg,var(--inkblot-semantic-color-background-secondary)_0%,var(--inkblot-semantic-color-background-tertiary)_50%,var(--inkblot-semantic-color-background-secondary)_100%)]'
+            'absolute right-[var(--inkblot-spacing-2)] top-[var(--inkblot-spacing-2)] flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] text-[var(--inkblot-semantic-color-text-inverse)]',
+            isProcessing
+              ? 'pointer-events-none bg-[var(--inkblot-semantic-color-interactive-primary)] opacity-90'
+              : ''
           )}
-        />
-      ) : response ? (
+        >
+          {isProcessing ? (
+            <Loader2
+              size={16}
+              strokeWidth={2}
+              className="animate-spin text-[var(--inkblot-semantic-color-text-inverse)]"
+              aria-hidden
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={onPromptSubmit}
+              disabled={isProcessing}
+              className={cn(
+                'flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] transition-colors duration-[var(--inkblot-duration-fast)]',
+                'bg-[var(--inkblot-semantic-color-interactive-primary)] hover:bg-[var(--inkblot-semantic-color-interactive-primary-hover)] active:bg-[var(--inkblot-semantic-color-interactive-primary-active)]',
+                'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]'
+              )}
+              aria-label="Enviar"
+            >
+              <Send
+                size={16}
+                strokeWidth={2}
+                className="text-[var(--inkblot-semantic-color-text-inverse)]"
+                aria-hidden
+              />
+            </button>
+          )}
+        </div>
+      </div>
+      </div>
+      {response ? (
         <div className="flex flex-col gap-[var(--inkblot-spacing-4)]">
           <div
             className="min-w-0 [font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-primary)]"
