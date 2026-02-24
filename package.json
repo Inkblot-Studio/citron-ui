@@ -1,6 +1,6 @@
 {
   "name": "@citron-systems/citron-ui",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Core UI component library for Citron CRM. Accessible, design-token-driven React components built with consistency and scalability in mind.",
   "type": "module",
   "main": "dist/index.js",
