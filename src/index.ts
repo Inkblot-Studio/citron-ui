@@ -10,6 +10,8 @@ export { IntelligenceScoreCard, type IntelligenceScoreCardProps } from './compon
 export { MetricComparisonList, type MetricComparisonListProps, type MetricComparisonItem, type MetricComparisonVariant } from './components/MetricComparisonList'
 export { ModuleContainer, type ModuleContainerProps } from './components/ModuleContainer'
 export { ModuleErrorBoundary, type ModuleErrorBoundaryProps } from './components/ModuleErrorBoundary'
+export { PageErrorFallback, type PageErrorFallbackProps } from './components/PageErrorFallback'
+export { RouteWithErrorBoundary, type RouteWithErrorBoundaryProps } from './components/RouteWithErrorBoundary'
 export { ModuleSkeleton, type ModuleSkeletonProps } from './components/Skeleton'
 export { OSNavigationRail, type OSNavigationRailProps, type OSNavigationRailItem } from './components/OSNavigationRail'
 export { Skeleton, type SkeletonProps } from './components/Skeleton'
