@@ -1,5 +1,14 @@
 import type { EntityType } from '../components/EntityCard'
 
+export type {
+  TaskStatus,
+  TaskPriority,
+  TaskItemData,
+  TaskWithStatus,
+  TaskSection,
+  TaskCreatePayload,
+} from './task'
+
 export interface GraphNode {
   id: string
   type: EntityType
