@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { CampaignTable } from './CampaignTable'
 import type { CampaignTableRow } from './CampaignTable'
@@ -89,4 +90,39 @@ export const SingleRow: Story = {
       </div>
     ),
   ],
+}
+
+export const ControlledSortingAndEmpty: Story = {
+  render: (args) => {
+    const [sortKey, setSortKey] = useState('date')
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+    const [showRows, setShowRows] = useState(true)
+
+    return (
+      <div className="bg-[var(--inkblot-semantic-color-background-primary)] p-6">
+        <button
+          type="button"
+          onClick={() => setShowRows((previous) => !previous)}
+          className="mb-4 rounded-[var(--inkblot-radius-md)] border border-[var(--inkblot-semantic-color-border-default)] px-3 py-1.5 text-xs text-[var(--inkblot-semantic-color-text-primary)]"
+        >
+          {showRows ? 'Show empty state' : 'Show rows'}
+        </button>
+        <CampaignTable
+          {...args}
+          rows={showRows ? SAMPLE_ROWS : []}
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onSortChange={(nextKey, nextDirection) => {
+            setSortKey(nextKey)
+            setSortDirection(nextDirection)
+          }}
+          emptyTitle="No campaigns for this segment"
+          emptyDescription="Change your filters or create a new campaign."
+        />
+      </div>
+    )
+  },
+  args: {
+    columns: COLUMNS,
+  },
 }

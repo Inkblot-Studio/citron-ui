@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Clock3 } from 'lucide-react'
 import { cn } from '../../utils/cn'
 import { ModuleErrorBoundary } from '../ModuleErrorBoundary'
 
@@ -26,13 +27,10 @@ const statusColors: Record<EventStreamStatus, string> = {
 
 function DefaultEventIcon() {
   return (
-    <svg
-      viewBox="0 0 16 16"
+    <Clock3
       className="h-4 w-4 text-[var(--inkblot-semantic-color-text-tertiary)]"
       aria-hidden
-    >
-      <circle cx="8" cy="8" r="2" fill="currentColor" />
-    </svg>
+    />
   )
 }
 
@@ -41,29 +39,29 @@ export function EventStreamFeed({ events, className }: EventStreamFeedProps) {
     <ModuleErrorBoundary className={className}>
       <div
         className={cn(
-          'flex flex-col gap-4 border-l-2 border-[var(--inkblot-semantic-color-border-default)] pl-4'
+          'flex flex-col gap-[var(--inkblot-spacing-3)] rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-4)] shadow-[var(--inkblot-shadow-sm)]'
         )}
       >
         {events.map((event) => (
           <div
             key={event.id}
-            className="flex items-start gap-3"
+            className="flex items-start gap-[var(--inkblot-spacing-3)] rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)]/60 bg-[var(--inkblot-semantic-color-background-primary)] px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)]"
           >
-            <div className="flex shrink-0 items-center pt-0.5">
+            <div className="mt-[var(--inkblot-spacing-1)] flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-md)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)]">
               {event.icon ?? <DefaultEventIcon />}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-[var(--inkblot-semantic-color-text-primary)]">
+              <p className="[font:var(--inkblot-semantic-typography-body-medium)] font-medium text-[var(--inkblot-semantic-color-text-primary)]">
                 {event.title}
               </p>
-              <p className="text-xs text-[var(--inkblot-semantic-color-text-tertiary)]">
+              <p className="[font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-tertiary)]">
                 {event.timestamp}
               </p>
             </div>
             {event.status ? (
               <div
                 className={cn(
-                  'mt-1.5 h-2 w-2 shrink-0 rounded-full',
+                  'mt-[var(--inkblot-spacing-2)] h-2 w-2 shrink-0 rounded-[var(--inkblot-radius-full)]',
                   statusColors[event.status]
                 )}
                 aria-hidden

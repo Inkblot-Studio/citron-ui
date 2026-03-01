@@ -29,7 +29,7 @@ export const Default: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="bg-[var(--inkblot-semantic-color-background-primary)] p-8">
+      <div className="bg-[var(--inkblot-semantic-color-background-primary)] p-[var(--inkblot-spacing-8)]">
         <Story />
       </div>
     ),

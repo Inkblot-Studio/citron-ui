@@ -23,6 +23,7 @@ The project consumes design tokens from the **@citron-systems/citron-ds** NPM pa
 | `src/components` | React components. Each component lives in its own folder with the component file and optional stories. |
 | `src/utils/inkblotTheme.ts` | Maps @citron-systems/citron-ds resolved tokens (Inkblot prefix) to Tailwind spacing and borderRadius. |
 | `src/index.ts` | Library entry point. Exports all public components and their types. |
+| `docs/LOVABLE_CITRON_INVENTORY.md` | Lovable→Citron inventory: equivalences (refactor vs create), Phase 1 scope, and token mapping matrix. |
 
 ## Development Workflow
 

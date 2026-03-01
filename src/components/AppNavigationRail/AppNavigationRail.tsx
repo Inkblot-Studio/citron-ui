@@ -38,21 +38,21 @@ export function AppNavigationRail({
     <ModuleErrorBoundary>
       <nav
         className={cn(
-          'flex h-full flex-col gap-4 bg-[var(--inkblot-semantic-color-background-secondary)] p-3',
+          'flex h-full flex-col gap-[var(--inkblot-spacing-4)] border-r border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-3)]',
           className
         )}
       >
         <div className="flex flex-col items-center gap-2">
           <div
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-md)] bg-[var(--inkblot-semantic-color-interactive-primary)]"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] shadow-[var(--inkblot-shadow-sm)]"
             title={brandTitle}
           >
             {brandLogo ?? (
-              <Sparkles className="h-5 w-5 text-[var(--inkblot-semantic-color-text-primary)]" aria-hidden />
+              <Sparkles className="h-5 w-5 text-[var(--inkblot-semantic-color-interactive-primary)]" aria-hidden />
             )}
           </div>
         </div>
-        <div className="flex flex-1 flex-col gap-2">
+        <div className="flex flex-1 flex-col gap-[var(--inkblot-spacing-2)]">
           {items.map((item) => {
             const Icon = item.icon
             return (
@@ -62,10 +62,10 @@ export function AppNavigationRail({
                 end={item.path === '/'}
                 aria-label={item.label}
                 className={({ isActive }) =>
-                  `flex items-center justify-center gap-2 rounded-[var(--inkblot-radius-md)] border-l-2 px-3 py-2 transition-colors duration-[var(--inkblot-duration-fast)] ${
+                  `flex items-center justify-center gap-[var(--inkblot-spacing-2)] rounded-[var(--inkblot-radius-lg)] border border-transparent px-[var(--inkblot-spacing-2)] py-[var(--inkblot-spacing-2)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)] ease-[var(--inkblot-easing-default)] ${
                     isActive
-                      ? 'border-[var(--inkblot-semantic-color-interactive-primary)] bg-[var(--inkblot-semantic-color-interactive-primary)] text-[var(--inkblot-semantic-color-text-primary)]'
-                      : 'border-transparent text-[var(--inkblot-semantic-color-text-secondary)] hover:bg-[var(--inkblot-semantic-color-interactive-secondary-hover)]'
+                      ? 'border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] text-[var(--inkblot-semantic-color-interactive-primary)]'
+                      : 'text-[var(--inkblot-semantic-color-text-secondary)] hover:border-[var(--inkblot-semantic-color-border-default)]/60 hover:bg-[var(--inkblot-semantic-color-background-primary)]'
                   }`
                 }
               >

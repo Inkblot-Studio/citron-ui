@@ -8,6 +8,7 @@ import { EmailComposeActionButtons } from '../ActionButtons'
 import { SearchBar } from '../SearchBar'
 import { EmailTemplatesSection } from '../EmailTemplatesSection'
 import { AIComposeInput } from '../AIComposeInput'
+import { Input } from '../Input'
 import { cn } from '../../utils/cn'
 import type { CampaignTableRow } from '../CampaignTable'
 import type { EmailTemplateItem } from '../EmailTemplatesSection'
@@ -183,17 +184,14 @@ export function EmailCampaignsView({
   }
 
   const handleSendNow = () => {
-    console.log('Send Now clicked')
     onSendNow?.()
   }
 
   const handleSchedule = () => {
-    console.log('Schedule clicked')
     onSchedule?.()
   }
 
   const handleSaveDraft = () => {
-    console.log('Save Draft clicked')
     onSaveDraft?.()
   }
 
@@ -207,7 +205,7 @@ export function EmailCampaignsView({
         className
       )}
     >
-      <div className="flex flex-1 flex-col gap-8 px-8 py-8">
+      <div className="flex flex-1 flex-col gap-[var(--inkblot-spacing-8)] px-[var(--inkblot-spacing-8)] py-[var(--inkblot-spacing-8)]">
         <PageHeader
           title="Email Campaigns"
           subtitle="Automate outreach · AI-powered templates"
@@ -251,25 +249,19 @@ export function EmailCampaignsView({
             onTemplateClick={onTemplateClick}
           />
         ) : (
-          <div className="flex max-w-2xl flex-col gap-6">
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
+          <div className="flex max-w-2xl flex-col gap-[var(--inkblot-spacing-6)] rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)]">
+            <div className="flex flex-col gap-[var(--inkblot-spacing-6)]">
+              <div className="flex flex-col gap-[var(--inkblot-spacing-2)]">
                 <label
                   className="uppercase tracking-wider text-[var(--inkblot-semantic-color-text-primary)] [font:var(--inkblot-semantic-typography-body-small)]"
                 >
                   Subject
                 </label>
-                <input
+                <Input
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="Enter subject line..."
-                  className={cn(
-                    'min-h-[var(--inkblot-size-touch-target-min)] w-full rounded-[var(--inkblot-radius-lg)]',
-                    'border border-[var(--inkblot-semantic-color-border-default)]',
-                    'bg-[var(--inkblot-semantic-color-background-secondary)]',
-                    'px-4 py-2 text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]'
-                  )}
                 />
               </div>
               <AIComposeInput
@@ -280,7 +272,7 @@ export function EmailCampaignsView({
                 loading={aiLoading}
                 onWriteWithAI={handleWriteWithAI}
               />
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-[var(--inkblot-spacing-2)]">
                 <SearchBar
                   label="Recipients"
                   placeholder="Search contacts, segments, or tags..."
@@ -288,7 +280,7 @@ export function EmailCampaignsView({
                   onChange={(e) => setRecipientsSearch(e.target.value)}
                 />
                 {filteredRecipients.length > 0 ? (
-                  <ul className="flex flex-wrap gap-2">
+                  <ul className="flex flex-wrap gap-[var(--inkblot-spacing-2)]">
                     {filteredRecipients.slice(0, 5).map((r) => (
                       <li
                         key={r}

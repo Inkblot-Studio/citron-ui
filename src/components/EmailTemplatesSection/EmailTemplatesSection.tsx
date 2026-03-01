@@ -26,7 +26,10 @@ export function EmailTemplatesSection({
 }: EmailTemplatesSectionProps) {
   return (
     <section
-      className={cn('flex flex-col gap-[var(--inkblot-spacing-6)]', className)}
+      className={cn(
+        'flex flex-col gap-[var(--inkblot-spacing-6)] rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-5)] shadow-[var(--inkblot-shadow-sm)]',
+        className
+      )}
     >
       <div className="flex flex-col gap-[var(--inkblot-spacing-4)] sm:flex-row sm:items-center sm:justify-between">
         <h2
@@ -45,7 +48,7 @@ export function EmailTemplatesSection({
             className={cn(
               'inline-flex min-h-[var(--inkblot-size-touch-target-min)] w-fit items-center justify-center gap-2 rounded-[var(--inkblot-radius-lg)]',
               'border border-[var(--inkblot-semantic-color-border-default)]',
-              'bg-[var(--inkblot-semantic-color-interactive-secondary)]',
+              'bg-[var(--inkblot-semantic-color-background-primary)]',
               'px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]',
               '[font:var(--inkblot-semantic-typography-body-medium)] font-medium',
               'text-[var(--inkblot-semantic-color-text-primary)]',

@@ -32,10 +32,7 @@ export const WithFileAttachment: Story = {
     placeholder: 'Ask Citron Intelligence...',
     onPromptChange: () => {},
     onPromptSubmit: () => {},
-    onFilesAttach: (files) => {
-      console.log('Archivos adjuntados:', files.map((f) => f.name))
-      alert(`Archivos adjuntados: ${files.map((f) => f.name).join(', ')}`)
-    },
+    onFilesAttach: () => {},
     multiple: true,
   },
 }
@@ -62,7 +59,7 @@ export const WithComponentResponse: Story = {
   args: {
     promptValue: 'Show me Acme Corp',
     response: (
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-[var(--inkblot-spacing-4)]">
         <EntityCard
           name="Acme Corporation"
           entityType="Organization"

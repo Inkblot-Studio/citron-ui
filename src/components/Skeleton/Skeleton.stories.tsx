@@ -22,9 +22,9 @@ export const Default: Story = {
 
 export const Card: Story = {
   render: () => (
-    <div className="flex w-64 flex-col gap-4 rounded-xl border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-4">
+    <div className="flex w-64 flex-col gap-[var(--inkblot-spacing-4)] rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-4)]">
       <Skeleton className="h-32 w-full" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-[var(--inkblot-spacing-2)]">
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-3/4" />
         <Skeleton className="h-4 w-1/2" />
@@ -35,7 +35,7 @@ export const Card: Story = {
 
 export const TextLines: Story = {
   render: () => (
-    <div className="flex w-80 flex-col gap-2">
+    <div className="flex w-80 flex-col gap-[var(--inkblot-spacing-2)]">
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-4/5" />
