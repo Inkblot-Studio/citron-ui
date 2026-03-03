@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ChevronDown, ChevronUp, Columns, GripVertical, Image, Minus, Square, Trash2, Type } from 'lucide-react'
+import { ChevronDown, ChevronUp, Columns, GripVertical, Image, Minus, MousePointerClick, Square, Trash2, Type } from 'lucide-react'
 import { cn } from '../../utils/cn'
 
 export type BlockType = 'heading' | 'text' | 'image' | 'button' | 'divider' | 'columns'
@@ -154,13 +154,18 @@ export function EmailBlockEditor({
           ))}
         </div>
       </aside>
-      <div className="min-h-[400px] flex-1 rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-6">
+      <div className="glass min-h-[400px] flex-1 rounded-[var(--inkblot-radius-lg)] p-6">
         {blocks.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
-            <GripVertical className="h-8 w-8 text-[var(--inkblot-semantic-color-text-tertiary)]/40" />
-            <p className="text-sm text-[var(--inkblot-semantic-color-text-tertiary)]">
-              Drop blocks here to build your email
-            </p>
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+            <MousePointerClick className="h-8 w-8 text-[var(--inkblot-semantic-color-text-tertiary)]/40" />
+            <div>
+              <p className="text-sm text-[var(--inkblot-semantic-color-text-tertiary)]">
+                Drop blocks here to build your email
+              </p>
+              <p className="mt-1 text-[10px] text-[var(--inkblot-semantic-color-text-tertiary)]/60">
+                or use AI to generate a full layout
+              </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-2">

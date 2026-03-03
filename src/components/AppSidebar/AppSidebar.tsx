@@ -1,18 +1,12 @@
 import type { ReactNode } from 'react'
 import {
-  Activity,
-  BarChart3,
   CheckSquare,
   Command,
   FileText,
-  FlaskConical,
-  GitBranch,
   Mail,
   MessageSquare,
-  PieChart,
   Settings,
   Users,
-  Workflow,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '../../utils/cn'
@@ -32,45 +26,17 @@ export interface AppSidebarProps {
   activePath?: string
   onNavigate?: (path: string) => void
   logo?: ReactNode
+  /** When true the status dot at the bottom pulses with an animation. */
+  showStatusDot?: boolean
   className?: string
 }
 
 const defaultItems: AppSidebarItem[] = [
   { id: 'canvas', icon: MessageSquare, label: 'Canvas', path: '/', dataTour: 'nav-canvas' },
-  { id: 'deals', icon: BarChart3, label: 'Deals', path: '/deals', dataTour: 'nav-deals' },
+  { id: 'invoices', icon: FileText, label: 'Invoices & Deals', path: '/invoices', dataTour: 'nav-invoices' },
   { id: 'contacts', icon: Users, label: 'Contacts', path: '/contacts', dataTour: 'nav-contacts' },
-  { id: 'graph', icon: GitBranch, label: 'Graph', path: '/graph', dataTour: 'nav-graph' },
-  { id: 'events', icon: Activity, label: 'Events', path: '/events', dataTour: 'nav-events' },
-  {
-    id: 'campaigns',
-    icon: Mail,
-    label: 'Campaigns',
-    path: '/campaigns',
-    dataTour: 'nav-campaigns',
-  },
-  {
-    id: 'invoices',
-    icon: FileText,
-    label: 'Invoices',
-    path: '/invoices',
-    dataTour: 'nav-invoices',
-  },
+  { id: 'campaigns', icon: Mail, label: 'Campaigns', path: '/campaigns', dataTour: 'nav-campaigns' },
   { id: 'tasks', icon: CheckSquare, label: 'Tasks', path: '/tasks', dataTour: 'nav-tasks' },
-  {
-    id: 'automations',
-    icon: Workflow,
-    label: 'Automations',
-    path: '/automations',
-    dataTour: 'nav-automations',
-  },
-  { id: 'reports', icon: PieChart, label: 'Reports', path: '/reports', dataTour: 'nav-reports' },
-  {
-    id: 'intelligence',
-    icon: FlaskConical,
-    label: 'Intel Lab',
-    path: '/intelligence',
-    dataTour: 'nav-intelligence',
-  },
 ]
 
 const defaultBottomItems: AppSidebarItem[] = [
@@ -83,6 +49,7 @@ export function AppSidebar({
   activePath = '/',
   onNavigate,
   logo,
+  showStatusDot = true,
   className,
 }: AppSidebarProps) {
   return (
@@ -101,7 +68,7 @@ export function AppSidebar({
           />
         )}
       </div>
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
+      <nav className="hide-scrollbar flex flex-1 flex-col gap-1 overflow-y-auto">
         {items.map((item) => (
           <NavLink
             key={item.id}
@@ -124,11 +91,13 @@ export function AppSidebar({
             dataTour={item.dataTour}
           />
         ))}
-        <span
-          data-tour="system-status"
-          className="mx-auto mt-2 h-2 w-2 rounded-full bg-[var(--inkblot-semantic-color-status-success)]"
-          title="System Online"
-        />
+        {showStatusDot ? (
+          <span
+            data-tour="system-status"
+            className="mx-auto mt-2 h-2 w-2 animate-pulse rounded-full bg-[var(--inkblot-semantic-color-status-success)]"
+            title="System Online"
+          />
+        ) : null}
       </div>
     </aside>
   )

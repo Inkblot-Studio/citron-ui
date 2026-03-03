@@ -24,6 +24,7 @@ const defaultSuggestions = [
   'Create a re-engagement email for churned users',
   'Draft a welcome email for new customers',
   'Write a quarterly business review summary',
+  'Create a seasonal promotion email with urgency',
 ]
 
 export function AIEmailGenerator({

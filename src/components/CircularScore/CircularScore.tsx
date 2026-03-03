@@ -2,6 +2,10 @@ export interface CircularScoreProps {
   label: string
   value: number
   tone?: 'success' | 'warning' | 'error' | 'info' | 'primary'
+  /** Override the stroke color with an arbitrary CSS color value. Takes precedence over `tone`. */
+  color?: string
+  /** When true the arc represents the inverse (100 - value). Useful for risk-style scores. */
+  inverted?: boolean
   size?: number
   className?: string
 }
@@ -18,14 +22,18 @@ export function CircularScore({
   label,
   value,
   tone = 'primary',
+  color,
+  inverted = false,
   size = 72,
   className,
 }: CircularScoreProps) {
   const clamped = Math.max(0, Math.min(100, value))
+  const displayValue = inverted ? 100 - clamped : clamped
   const strokeWidth = 5
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
-  const strokeDashoffset = circumference - (clamped / 100) * circumference
+  const strokeDashoffset = circumference - (displayValue / 100) * circumference
+  const strokeColor = color ?? toneStrokeMap[tone]
 
   return (
     <div className={className}>
@@ -45,7 +53,7 @@ export function CircularScore({
               cy={size / 2}
               r={radius}
               fill="none"
-              stroke={toneStrokeMap[tone]}
+              stroke={strokeColor}
               strokeWidth={strokeWidth}
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}

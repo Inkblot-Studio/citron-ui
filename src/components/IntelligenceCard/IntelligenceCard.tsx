@@ -5,6 +5,10 @@ export interface IntelligenceScoreItem {
   label: string
   value: number
   tone?: 'success' | 'warning' | 'error' | 'info' | 'primary'
+  /** Override the stroke color with an arbitrary CSS color value. */
+  color?: string
+  /** When true the arc represents the inverse (100 - value). Useful for risk scores. */
+  inverted?: boolean
 }
 
 export interface IntelligenceCardProps {
@@ -15,7 +19,7 @@ export interface IntelligenceCardProps {
 
 const defaultItems: IntelligenceScoreItem[] = [
   { label: 'Revenue Confidence', value: 82, tone: 'success' },
-  { label: 'Churn Risk', value: 23, tone: 'warning' },
+  { label: 'Churn Risk', value: 23, tone: 'warning', inverted: true },
   { label: 'Momentum', value: 67, tone: 'primary' },
 ]
 
@@ -27,7 +31,7 @@ export function IntelligenceCard({
   return (
     <article
       className={cn(
-        'rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-5',
+        'glass rounded-[var(--inkblot-radius-lg)] p-5',
         className
       )}
     >
@@ -41,6 +45,8 @@ export function IntelligenceCard({
             label={item.label}
             value={item.value}
             tone={item.tone}
+            color={item.color}
+            inverted={item.inverted}
           />
         ))}
       </div>

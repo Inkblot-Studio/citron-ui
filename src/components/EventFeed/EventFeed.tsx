@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import { CreditCard, FileText, GitBranch, Mail, Phone, Zap } from 'lucide-react'
 import { cn } from '../../utils/cn'
 
-export type EventStatus = 'success' | 'warning' | 'error' | 'info'
+export type EventStatus = 'success' | 'warning' | 'error' | 'danger' | 'info'
 
 export interface EventFeedItem {
   id: string | number
@@ -68,7 +68,15 @@ const defaultEvents: EventFeedItem[] = [
     title: 'New relationship detected',
     meta: 'Acme ↔ DataFlow Labs',
     time: '2h ago',
-    status: 'error',
+    status: 'info',
+  },
+  {
+    id: 7,
+    icon: CreditCard,
+    title: 'Invoice overdue',
+    meta: '$8,200 · StartupXYZ',
+    time: '3h ago',
+    status: 'danger',
   },
 ]
 
@@ -76,6 +84,7 @@ const statusDotClassMap: Record<EventStatus, string> = {
   success: 'bg-[var(--inkblot-semantic-color-status-success)]',
   warning: 'bg-[var(--inkblot-semantic-color-status-warning)]',
   error: 'bg-[var(--inkblot-semantic-color-status-error)]',
+  danger: 'bg-[var(--inkblot-semantic-color-status-error)]',
   info: 'bg-[var(--inkblot-semantic-color-status-info)]',
 }
 
