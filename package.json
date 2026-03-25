@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "@citron-systems/citron-ds": "^1.0.0",
+    "@hello-pangea/dnd": "^18.0.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
     "react": "^19.0.0",

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { ThemeProvider } from '../ThemeProvider'
 import { AppSidebar } from './AppSidebar'
 
 const meta = {
@@ -12,9 +13,11 @@ const meta = {
   render: () => {
     const [activePath, setActivePath] = useState('/')
     return (
-      <div className="h-[520px] bg-[var(--inkblot-semantic-color-background-primary)]">
-        <AppSidebar activePath={activePath} onNavigate={setActivePath} />
-      </div>
+      <ThemeProvider>
+        <div className="h-[520px] bg-[var(--inkblot-semantic-color-background-primary)]">
+          <AppSidebar activePath={activePath} onNavigate={setActivePath} />
+        </div>
+      </ThemeProvider>
     )
   },
 } satisfies Meta<typeof AppSidebar>
@@ -27,8 +30,10 @@ export const Default: Story = {}
 
 export const ActiveReports: Story = {
   render: () => (
-    <div className="h-[520px] bg-[var(--inkblot-semantic-color-background-primary)]">
-      <AppSidebar activePath="/reports" />
-    </div>
+    <ThemeProvider>
+      <div className="h-[520px] bg-[var(--inkblot-semantic-color-background-primary)]">
+        <AppSidebar activePath="/reports" />
+      </div>
+    </ThemeProvider>
   ),
 }

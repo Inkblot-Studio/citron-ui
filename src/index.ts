@@ -38,6 +38,22 @@ export { MainShell, type MainShellProps } from './components/MainShell'
 export { TaskCreateForm, type TaskCreateFormProps } from './components/TaskCreateForm'
 export { TasksView, type TasksViewProps } from './components/TasksView'
 export { EmailCampaignsView, type EmailCampaignsViewProps } from './components/EmailCampaignsView'
+export {
+  ThemeProvider,
+  useTheme,
+  CITRON_THEME_STORAGE_KEY,
+  type CitronTheme,
+  type ThemeContextValue,
+} from './components/ThemeProvider'
+export { ThemeSwitcherButton, type ThemeSwitcherButtonProps } from './components/ThemeSwitcherButton'
+export {
+  TaskKanbanBoard,
+  TaskKanbanColumn,
+  TaskKanbanCard,
+  type TaskKanbanBoardProps,
+  type TaskKanbanColumnProps,
+  type TaskKanbanCardProps,
+} from './components/TasksKanbanBoard'
 export * from './components/Accordion'
 export * from './components/Alert'
 export * from './components/AlertDialog'
@@ -98,4 +114,14 @@ export * from './components/Tooltip'
 export * from './components/CanvasContext'
 export { RightPanel, type RightPanelProps, type RightPanelTab, type RightPanelAgent, type RightPanelChatMessage } from './components/RightPanel'
 export { NavLinkRouter, type NavLinkRouterProps } from './components/NavLinkRouter'
-export type { GraphNode, ChatMessage, TaskStatus, TaskPriority, TaskItemData, TaskWithStatus, TaskSection, TaskCreatePayload } from './types'
+export type {
+  GraphNode,
+  ChatMessage,
+  TaskStatus,
+  TaskPriority,
+  TaskItemData,
+  TaskWithStatus,
+  TaskSection,
+  TaskCreatePayload,
+} from './types'
+export * from './theme/themeTokens'

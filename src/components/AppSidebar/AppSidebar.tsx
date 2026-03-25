@@ -11,6 +11,7 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '../../utils/cn'
 import { NavLink } from '../NavLink'
+import { ThemeSwitcherButton } from '../ThemeSwitcherButton'
 
 export interface AppSidebarItem {
   id: string
@@ -28,6 +29,8 @@ export interface AppSidebarProps {
   logo?: ReactNode
   /** When true the status dot at the bottom pulses with an animation. */
   showStatusDot?: boolean
+  /** Renders the global theme toggle (moon/sun) next to bottom nav items. Requires ThemeProvider. */
+  showThemeToggle?: boolean
   className?: string
 }
 
@@ -50,6 +53,7 @@ export function AppSidebar({
   onNavigate,
   logo,
   showStatusDot = true,
+  showThemeToggle = true,
   className,
 }: AppSidebarProps) {
   return (
@@ -91,6 +95,14 @@ export function AppSidebar({
             dataTour={item.dataTour}
           />
         ))}
+        {showThemeToggle ? (
+          <div className="group relative flex justify-center">
+            <ThemeSwitcherButton className="h-10 w-10 min-h-0 min-w-0 shrink-0 rounded-[var(--inkblot-radius-md)]" />
+            <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-[var(--inkblot-radius-sm)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] px-2 py-1 text-xs font-medium text-[var(--inkblot-semantic-color-text-primary)] opacity-0 transition-opacity duration-[var(--inkblot-duration-fast)] group-hover:opacity-100">
+              Theme
+            </span>
+          </div>
+        ) : null}
         {showStatusDot ? (
           <span
             data-tour="system-status"

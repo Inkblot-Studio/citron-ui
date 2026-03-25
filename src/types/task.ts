@@ -10,6 +10,8 @@ export interface TaskItemData {
   date: string
   assignee: string
   completed?: boolean
+  /** Jira issue key when synced (e.g. PROJ-123). Shown on Kanban cards. */
+  jiraKey?: string
 }
 
 export interface TaskWithStatus extends TaskItemData {
