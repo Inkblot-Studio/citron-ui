@@ -97,7 +97,7 @@ export function AppSidebar({
         ))}
         {showThemeToggle ? (
           <div className="group relative flex justify-center">
-            <ThemeSwitcherButton className="h-10 w-10 min-h-0 min-w-0 shrink-0 rounded-[var(--inkblot-radius-md)]" />
+            <ThemeSwitcherButton />
             <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-[var(--inkblot-radius-sm)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] px-2 py-1 text-xs font-medium text-[var(--inkblot-semantic-color-text-primary)] opacity-0 transition-opacity duration-[var(--inkblot-duration-fast)] group-hover:opacity-100">
               Theme
             </span>

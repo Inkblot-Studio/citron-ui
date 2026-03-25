@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -50,10 +51,13 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<CitronTheme>('light')
   const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
+  // Apply stored / system theme before first paint to avoid wrong flash and keep DOM in sync.
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return
     const stored = getStoredTheme()
     const initial = stored ?? getPreferredTheme()
     setThemeState(initial)
+    applyThemeToDocument(initial)
     setMounted(true)
   }, [])
 
