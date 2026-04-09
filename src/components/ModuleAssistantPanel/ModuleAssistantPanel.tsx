@@ -96,7 +96,7 @@ export function ModuleAssistantPanel({
               msg.role === 'user' ? (
                 <div key={msg.id} className="flex justify-end">
                   <div className="max-w-[85%] rounded-[var(--inkblot-radius-lg)] rounded-br-[var(--inkblot-radius-md)] bg-[var(--inkblot-semantic-color-interactive-primary)] px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] shadow-[var(--inkblot-shadow-sm)]">
-                    <p className="[font:var(--inkblot-semantic-typography-body-small)] text-white">
+                    <p className="[font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-inverse)] opacity-80">
                       {msg.content}
                     </p>
                   </div>
@@ -147,7 +147,7 @@ export function ModuleAssistantPanel({
             type="button"
             onClick={handleSend}
             disabled={!input.trim() || isProcessing}
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-interactive-primary)] text-white transition-opacity duration-[var(--inkblot-duration-fast)] hover:opacity-90 disabled:opacity-30"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-interactive-primary)] text-[var(--inkblot-semantic-color-text-inverse)] transition-opacity duration-[var(--inkblot-duration-fast)] hover:opacity-90 disabled:opacity-30"
             aria-label="Send message"
           >
             <Send className="h-3 w-3" />

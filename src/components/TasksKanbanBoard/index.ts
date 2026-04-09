@@ -1,3 +1,5 @@
 export { TaskKanbanBoard, type TaskKanbanBoardProps } from './TaskKanbanBoard'
+export { TaskKanbanBoard as TaskKanban } from './TaskKanbanBoard'
+export type { TaskKanbanBoardProps as TaskKanbanProps } from './TaskKanbanBoard'
 export { TaskKanbanColumn, type TaskKanbanColumnProps } from './TaskKanbanColumn'
 export { TaskKanbanCard, type TaskKanbanCardProps } from './TaskKanbanCard'

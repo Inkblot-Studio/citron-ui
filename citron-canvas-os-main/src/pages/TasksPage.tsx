@@ -35,7 +35,7 @@ const statusGroups = [
 
 const TasksPage = () => {
   return (
-    <AppLayout showRightPanel>
+    <AppLayout>
       <div className="h-full flex flex-col">
         <header className="px-8 py-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">

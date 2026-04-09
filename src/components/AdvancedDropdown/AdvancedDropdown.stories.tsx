@@ -100,3 +100,24 @@ export const DisabledItems: Story = {
     placeholder: 'Select status',
   },
 }
+
+const allContacts = [
+  { value: '1', label: 'Alice Johnson', description: 'VP Sales' },
+  { value: '2', label: 'Bob Smith', description: 'CTO' },
+  { value: '3', label: 'Carol Williams', description: 'Head of Marketing' },
+  { value: '4', label: 'David Brown', description: 'CFO' },
+  { value: '5', label: 'Eva Martinez', description: 'Product Manager' },
+]
+
+export const Async: Story = {
+  args: {
+    loadOptions: async (query: string) => {
+      await new Promise((r) => setTimeout(r, 600))
+      return allContacts.filter((c) =>
+        c.label.toLowerCase().includes(query.toLowerCase()),
+      )
+    },
+    placeholder: 'Search contacts...',
+    clearable: true,
+  },
+}

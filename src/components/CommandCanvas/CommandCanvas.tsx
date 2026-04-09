@@ -39,7 +39,7 @@ export interface CommandCanvasProps {
   onSend?: (value: string) => void
   generateAssistantMessage?: (value: string) => Omit<CommandCanvasMessage, 'id' | 'role'>
   renderCard?: (type: CommandCanvasCardType) => ReactNode
-  /** When true, hides the built-in input bar. Useful when using RightPanel for input. */
+  /** When true, hides the built-in input bar. */
   hideInput?: boolean
   className?: string
 }

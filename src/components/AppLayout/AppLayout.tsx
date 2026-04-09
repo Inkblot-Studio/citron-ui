@@ -2,18 +2,13 @@ import type { ReactNode } from 'react'
 import { cn } from '../../utils/cn'
 import { AppSidebar, type AppSidebarProps } from '../AppSidebar'
 import { EventFeed, type EventFeedProps } from '../EventFeed'
-import { RightPanel, type RightPanelProps } from '../RightPanel'
 import { CanvasProvider, type CanvasProviderProps } from '../CanvasContext'
 
 export interface AppLayoutProps {
   children: ReactNode
-  /** @deprecated Use `showRightPanel` instead. */
   showEventFeed?: boolean
-  /** Shows the AI chat + events right panel. */
-  showRightPanel?: boolean
   sidebarProps?: Partial<AppSidebarProps>
   eventFeedProps?: Partial<EventFeedProps>
-  rightPanelProps?: Partial<RightPanelProps>
   canvasProviderProps?: Partial<CanvasProviderProps>
   className?: string
 }
@@ -21,20 +16,16 @@ export interface AppLayoutProps {
 export function AppLayout({
   children,
   showEventFeed = false,
-  showRightPanel = false,
   sidebarProps,
   eventFeedProps,
-  rightPanelProps,
   canvasProviderProps,
   className,
 }: AppLayoutProps) {
-  const showPanel = showRightPanel || showEventFeed
-
   const content = (
     <div
       className={cn(
         'flex h-screen w-full overflow-hidden bg-[var(--inkblot-semantic-color-background-primary)]',
-        className
+        className,
       )}
     >
       <AppSidebar {...sidebarProps} />
@@ -42,26 +33,19 @@ export function AppLayout({
         <section data-tour="canvas" className="hide-scrollbar flex-1 overflow-y-auto">
           {children}
         </section>
-        {showPanel ? (
+        {showEventFeed && (
           <aside
-            data-tour="right-panel"
+            data-tour="event-feed"
             className="flex w-80 flex-col overflow-hidden border-l border-[var(--inkblot-semantic-color-border-default)]"
           >
-            {showRightPanel ? (
-              <RightPanel
-                renderEventsTab={() => <EventFeed {...eventFeedProps} />}
-                {...rightPanelProps}
-              />
-            ) : (
-              <EventFeed {...eventFeedProps} />
-            )}
+            <EventFeed {...eventFeedProps} />
           </aside>
-        ) : null}
+        )}
       </main>
     </div>
   )
 
-  if (showRightPanel) {
+  if (canvasProviderProps) {
     return <CanvasProvider {...canvasProviderProps}>{content}</CanvasProvider>
   }
 

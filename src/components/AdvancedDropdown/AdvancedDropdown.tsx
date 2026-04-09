@@ -1,5 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronDown, Search, X } from 'lucide-react'
+import { ChevronDown, Loader2, Search, X } from 'lucide-react'
 import { cn } from '../../utils/cn'
 
 export interface AdvancedDropdownOption {
@@ -11,26 +11,31 @@ export interface AdvancedDropdownOption {
 }
 
 export interface AdvancedDropdownProps {
-  options: AdvancedDropdownOption[]
+  options?: AdvancedDropdownOption[]
+  /** Async loader — called with the current search query; takes precedence over `options`. */
+  loadOptions?: (query: string) => Promise<AdvancedDropdownOption[]>
   value?: string
   defaultValue?: string
   onChange?: (value: string | null) => void
   placeholder?: string
   searchPlaceholder?: string
   emptyMessage?: string
+  loadingMessage?: string
   clearable?: boolean
   disabled?: boolean
   className?: string
 }
 
 export function AdvancedDropdown({
-  options,
+  options: staticOptions = [],
+  loadOptions,
   value: controlledValue,
   defaultValue,
   onChange,
   placeholder = 'Select an option',
   searchPlaceholder = 'Search...',
   emptyMessage = 'No results found',
+  loadingMessage = 'Loading...',
   clearable = false,
   disabled = false,
   className,
@@ -43,15 +48,48 @@ export function AdvancedDropdown({
   const [search, setSearch] = useState('')
   const [highlightIndex, setHighlightIndex] = useState(-1)
 
+  const [asyncOptions, setAsyncOptions] = useState<AdvancedDropdownOption[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const loadIdRef = useRef(0)
+
+  const isAsync = loadOptions !== undefined
+  const options = isAsync ? asyncOptions : staticOptions
+
   const containerRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const filtered = options.filter((o) =>
-    o.label.toLowerCase().includes(search.toLowerCase())
-  )
+  useEffect(() => {
+    if (!isAsync || !open) return
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    debounceRef.current = setTimeout(() => {
+      const id = ++loadIdRef.current
+      setIsLoading(true)
+      loadOptions(search).then((result) => {
+        if (id === loadIdRef.current) {
+          setAsyncOptions(result)
+          setIsLoading(false)
+          setHighlightIndex(-1)
+        }
+      }).catch(() => {
+        if (id === loadIdRef.current) {
+          setAsyncOptions([])
+          setIsLoading(false)
+        }
+      })
+    }, 250)
+
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [search, open, isAsync, loadOptions])
+
+  const filtered = isAsync
+    ? options
+    : options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
 
   const selectedOption = options.find((o) => o.value === selectedValue)
+    ?? (isAsync ? staticOptions.find((o) => o.value === selectedValue) : undefined)
 
   const select = useCallback(
     (val: string | null) => {
@@ -232,7 +270,12 @@ export function AdvancedDropdown({
           role="listbox"
           className="max-h-60 overflow-y-auto p-[var(--inkblot-spacing-1)]"
         >
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <li className="flex items-center justify-center gap-[var(--inkblot-spacing-2)] px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-4)] text-sm text-[var(--inkblot-semantic-color-text-tertiary)]">
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+              {loadingMessage}
+            </li>
+          ) : filtered.length === 0 ? (
             <li className="px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-4)] text-center text-sm text-[var(--inkblot-semantic-color-text-tertiary)]">
               {emptyMessage}
             </li>

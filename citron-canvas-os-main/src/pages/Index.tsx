@@ -3,7 +3,7 @@ import { CommandCanvas } from "../components/ai/CommandCanvas";
 
 const Index = () => {
   return (
-    <AppLayout showRightPanel>
+    <AppLayout>
       <CommandCanvas />
     </AppLayout>
   );

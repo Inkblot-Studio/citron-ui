@@ -1,9 +1,14 @@
+// ── Chat system ──────────────────────────────────────────────────────────────
+export * from './components/GlobalAssistantChat'
+export * from './components/AssistantPanel'
+export * from './components/CenteredAssistantChat'
+
+// ── Named component exports ─────────────────────────────────────────────────
 export { ActionButtons, EmailComposeActionButtons, type ActionButtonsProps, type ActionButtonItem } from './components/ActionButtons'
 export { AIComposeInput, type AIComposeInputProps } from './components/AIComposeInput'
 export { Button, type ButtonProps, type ButtonVariant } from './components/Button'
 export { CampaignTable, type CampaignTableProps, type CampaignTableRow, type CampaignStatus } from './components/CampaignTable'
 export { EmailTemplatesSection, type EmailTemplatesSectionProps, type EmailTemplateItem } from './components/EmailTemplatesSection'
-export { CommandInterface, type CommandInterfaceProps } from './components/CommandInterface'
 export { EntityCard, type EntityCardProps, type EntityCardStat, type EntityType, type Edge } from './components/EntityCard'
 export { EntityCommandCard, type EntityCommandCardProps, type EntityCommandCardStat } from './components/EntityCommandCard'
 export { ErrorBoundary, type ErrorBoundaryProps } from './components/ErrorBoundary'
@@ -30,7 +35,6 @@ export { TaskList, type TaskListProps } from './components/TaskList'
 export { TemplateCard, type TemplateCardProps } from './components/TemplateCard'
 export { ActivityStream, type ActivityStreamProps } from './components/ActivityStream'
 export { AppNavigationRail, type AppNavigationRailProps, type AppNavigationRailItem } from './components/AppNavigationRail'
-export { ChatFeed, type ChatFeedProps } from './components/ChatFeed'
 export { CommandBar, type CommandBarProps } from './components/CommandBar'
 export { EventStreamSidebar, type EventStreamSidebarProps } from './components/EventStreamSidebar'
 export { IntelligenceLab, type IntelligenceLabProps, type IntelligenceLabKpiCard, type IntelligenceLabInsight } from './components/IntelligenceLab'
@@ -48,13 +52,22 @@ export {
 export { ThemeSwitcherButton, type ThemeSwitcherButtonProps } from './components/ThemeSwitcherButton'
 export {
   TaskKanbanBoard,
+  TaskKanban,
   TaskKanbanColumn,
   TaskKanbanCard,
   type TaskKanbanBoardProps,
+  type TaskKanbanProps,
   type TaskKanbanColumnProps,
   type TaskKanbanCardProps,
 } from './components/TasksKanbanBoard'
+export { NavLinkRouter, type NavLinkRouterProps } from './components/NavLinkRouter'
+
+// ── Invoice editor ──────────────────────────────────────────────────────────
+export * from './components/InvoiceEditor'
+
+// ── Barrel re-exports ───────────────────────────────────────────────────────
 export * from './components/Accordion'
+export * from './components/AdvancedDropdown'
 export * from './components/Alert'
 export * from './components/AlertDialog'
 export * from './components/AIEmailGenerator'
@@ -112,8 +125,11 @@ export * from './components/Toggle'
 export * from './components/ToggleGroup'
 export * from './components/Tooltip'
 export * from './components/CanvasContext'
-export { RightPanel, type RightPanelProps, type RightPanelTab, type RightPanelAgent, type RightPanelChatMessage } from './components/RightPanel'
-export { NavLinkRouter, type NavLinkRouterProps } from './components/NavLinkRouter'
+export * from './components/TemplateMasonryGrid'
+export * from './components/TaskDetailsPanel'
+export * from './components/IntegrationPlaceholder'
+
+// ── Types ───────────────────────────────────────────────────────────────────
 export type {
   GraphNode,
   ChatMessage,
@@ -125,10 +141,3 @@ export type {
   TaskCreatePayload,
 } from './types'
 export * from './theme/themeTokens'
-export * from './components/AdvancedDropdown'
-export * from './components/CenteredAIChat'
-export * from './components/ModuleAssistantPanel'
-export * from './components/SmartInvoiceBuilder'
-export * from './components/TemplateMasonryGrid'
-export * from './components/TaskDetailsPanel'
-export * from './components/IntegrationPlaceholder'
