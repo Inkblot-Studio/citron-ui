@@ -62,7 +62,7 @@ const defaultAgents: RightPanelAgent[] = [
 ]
 
 const defaultAgentResponses: Record<string, { text: string; cards: ('entity' | 'intelligence')[] }> = {
-  general: { text: "Here's an overview of your CRM data with entity profile and intelligence scores.", cards: ['entity', 'intelligence'] },
+  general: { text: "Here's an overview of your CRM data with entity profile and intelligence insights.", cards: ['entity', 'intelligence'] },
   invoices: { text: "I've pulled up your latest invoice data and deal health metrics.", cards: ['entity', 'intelligence'] },
   campaigns: { text: 'Analyzing your campaign performance. Here are the key insights.', cards: ['intelligence'] },
   contacts: { text: "Here's the contact profile and relationship intelligence.", cards: ['entity'] },

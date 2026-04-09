@@ -72,7 +72,7 @@ export function Toast({
         {onClose ? (
           <button
             type="button"
-            aria-label="Cerrar notificación"
+            aria-label="Close notification"
             onClick={onClose}
             className="inline-flex size-8 items-center justify-center rounded-[var(--inkblot-radius-md)] text-[var(--inkblot-semantic-color-text-tertiary)] hover:text-[var(--inkblot-semantic-color-text-primary)]"
           >

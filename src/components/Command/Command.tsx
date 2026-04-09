@@ -20,7 +20,7 @@ export interface CommandProps {
 
 export function Command({
   items,
-  placeholder = 'Buscar comando...',
+  placeholder = 'Search commands...',
   onSelect,
   className,
 }: CommandProps) {
@@ -81,7 +81,7 @@ export function Command({
           </ul>
         ) : (
           <div className="px-[var(--inkblot-spacing-2)] py-[var(--inkblot-spacing-3)] text-sm text-[var(--inkblot-semantic-color-text-secondary)]">
-            Sin resultados para tu búsqueda.
+            No results found.
           </div>
         )}
       </div>

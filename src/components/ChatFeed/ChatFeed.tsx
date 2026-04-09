@@ -34,7 +34,7 @@ function GeneratedEntityUI({ entities }: { entities: GraphNode[] }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-[var(--inkblot-semantic-color-text-secondary)]">
-        Here&apos;s the entity profile and current intelligence scores:
+        Here&apos;s the entity profile and current insights:
       </p>
       <EntityCard
         name={entity.name}
@@ -65,7 +65,7 @@ function GeneratedEventUI({ events }: { events: CitronEvent[] }) {
 function GeneratedGeneralUI() {
   return (
     <p className="text-sm text-[var(--inkblot-semantic-color-text-primary)]">
-      Revenue confidence is trending upward at 78%. Momentum score increased 12% this week driven by 3 new meetings with Acme Corp. Churn risk remains low at 15% across the active pipeline.
+      Revenue confidence is trending upward at 78%. Momentum increased 12% this week driven by 3 new meetings with Acme Corp. Churn risk remains low at 15% across the active pipeline.
     </p>
   )
 }
@@ -76,7 +76,7 @@ export function ChatFeed({
   onFocusEntity,
   findEntity,
   placeholder = 'Ask anything — deals, contacts, forecasts...',
-  emptyMessage = 'Escribe para comenzar...',
+  emptyMessage = 'Type to get started...',
   className,
 }: ChatFeedProps) {
   const [prompt, setPrompt] = useState('')

@@ -77,7 +77,7 @@ export function CommandInterface({
             'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-secondary)]',
             'disabled:pointer-events-none disabled:opacity-[var(--inkblot-opacity-disabled)]'
           )}
-          aria-label="Adjuntar archivos"
+          aria-label="Attach files"
         >
           <Paperclip size={18} strokeWidth={1.7} aria-hidden />
         </button>
@@ -124,7 +124,7 @@ export function CommandInterface({
                   'hover:bg-[var(--inkblot-semantic-color-interactive-primary-hover)] active:bg-[var(--inkblot-semantic-color-interactive-primary-active)]',
                   'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]'
                 )}
-                aria-label="Enviar"
+                aria-label="Send"
               >
                 <Send size={16} strokeWidth={2} aria-hidden />
               </button>

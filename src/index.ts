@@ -125,3 +125,10 @@ export type {
   TaskCreatePayload,
 } from './types'
 export * from './theme/themeTokens'
+export * from './components/AdvancedDropdown'
+export * from './components/CenteredAIChat'
+export * from './components/ModuleAssistantPanel'
+export * from './components/SmartInvoiceBuilder'
+export * from './components/TemplateMasonryGrid'
+export * from './components/TaskDetailsPanel'
+export * from './components/IntegrationPlaceholder'

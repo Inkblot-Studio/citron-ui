@@ -17,7 +17,7 @@ export function PageErrorFallback({
       )}
     >
       <p className="text-center text-[var(--inkblot-semantic-color-text-primary)] [font:var(--inkblot-semantic-typography-heading-medium)]">
-        Esta página no está disponible
+        This page is unavailable
       </p>
       <div className="flex flex-col items-center gap-[var(--inkblot-spacing-4)] sm:flex-row">
         <button
@@ -31,7 +31,7 @@ export function PageErrorFallback({
             'transition-colors duration-[var(--inkblot-duration-fast)]'
           )}
         >
-          Reintentar
+          Retry
         </button>
         <Link
           to="/"
@@ -42,7 +42,7 @@ export function PageErrorFallback({
             'transition-colors duration-[var(--inkblot-duration-fast)]'
           )}
         >
-          Ir al inicio
+          Go to home
         </Link>
       </div>
     </div>

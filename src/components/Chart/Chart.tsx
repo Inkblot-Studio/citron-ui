@@ -17,7 +17,7 @@ export interface ChartProps {
 export function Chart({
   data,
   title = 'Rendimiento',
-  emptyMessage = 'No hay datos para mostrar.',
+  emptyMessage = 'No data to display.',
   className,
 }: ChartProps) {
   const maxValue = Math.max(...data.map((item) => item.value), 0)

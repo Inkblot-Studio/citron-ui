@@ -51,7 +51,7 @@ export function Sheet({
     <div className="fixed inset-0 z-50">
       <button
         type="button"
-        aria-label="Cerrar panel"
+        aria-label="Close panel"
         onClick={() => onOpenChange?.(false)}
         className={cn(
           'absolute inset-0 bg-[var(--inkblot-semantic-color-background-primary)]/70',
@@ -81,7 +81,7 @@ export function Sheet({
             {showCloseButton ? (
               <button
                 type="button"
-                aria-label="Cerrar"
+                aria-label="Close"
                 onClick={() => onOpenChange?.(false)}
                 className="inline-flex size-9 items-center justify-center rounded-[var(--inkblot-radius-md)] border border-[var(--inkblot-semantic-color-border-default)] text-[var(--inkblot-semantic-color-text-secondary)] transition-colors hover:text-[var(--inkblot-semantic-color-text-primary)]"
               >

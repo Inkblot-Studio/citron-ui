@@ -49,7 +49,7 @@ export function ActivityStream({
   events,
   onEntitySelect,
   findEntity,
-  emptyMessage = 'No hay actividad reciente',
+  emptyMessage = 'No recent activity',
   className,
 }: ActivityStreamProps) {
   const handleClick = onEntitySelect

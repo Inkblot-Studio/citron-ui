@@ -53,7 +53,7 @@ const defaultMessages: CommandCanvasMessage[] = [
   {
     id: '2',
     role: 'assistant',
-    content: "Here's the entity profile and current intelligence scores for Acme Corp.",
+    content: "Here's the entity profile and current intelligence insights for Acme Corp.",
     cards: ['entity', 'intelligence'],
   },
 ]
