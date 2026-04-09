@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react'
+import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react'
 import { FileText, Loader2, Paperclip, Send, Sparkles, X } from 'lucide-react'
 import { cn } from '../../utils/cn'
 
@@ -82,6 +82,7 @@ export function GlobalAssistantChat({
   const [attachments, setAttachments] = useState<PendingAttachment[]>([])
   const feedRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (feedRef.current) {
@@ -89,10 +90,27 @@ export function GlobalAssistantChat({
     }
   }, [messages])
 
-  const handleSend = () => {
+  useEffect(() => {
+    return () => {
+      attachments.forEach((a) => {
+        if (a.previewUrl) URL.revokeObjectURL(a.previewUrl)
+      })
+    }
+    // Only on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleSend = useCallback(() => {
     const trimmed = input.trim()
-    if ((!trimmed && attachments.length === 0) || isProcessing) return
-    onSend?.({ text: trimmed, files: attachments.map((a) => a.file) })
+    if (!trimmed && attachments.length === 0) return
+    if (isProcessing) return
+
+    try {
+      onSend?.({ text: trimmed, files: attachments.map((a) => a.file) })
+    } catch {
+      // Swallow errors from consumer callbacks to keep the chat functional
+    }
+
     setInput('')
     setAttachments((prev) => {
       prev.forEach((a) => {
@@ -100,16 +118,23 @@ export function GlobalAssistantChat({
       })
       return []
     })
-  }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
-    }
-  }
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus()
+    })
+  }, [input, attachments, isProcessing, onSend])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        handleSend()
+      }
+    },
+    [handleSend],
+  )
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
 
@@ -123,15 +148,15 @@ export function GlobalAssistantChat({
     })
     setAttachments((prev) => [...prev, ...newAttachments])
     e.target.value = ''
-  }
+  }, [])
 
-  const removeAttachment = (index: number) => {
+  const removeAttachment = useCallback((index: number) => {
     setAttachments((prev) => {
       const removed = prev[index]
       if (removed?.previewUrl) URL.revokeObjectURL(removed.previewUrl)
       return prev.filter((_, i) => i !== index)
     })
-  }
+  }, [])
 
   return (
     <div
@@ -194,14 +219,13 @@ export function GlobalAssistantChat({
         </div>
       )}
 
+      {/* Input area — never disabled; isProcessing only prevents sending */}
       <div className="shrink-0 border-t border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)]">
         <div className="mx-auto max-w-4xl">
           <div
             className={cn(
               'overflow-hidden rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] shadow-[var(--inkblot-shadow-sm)]',
-              isProcessing && 'pointer-events-none',
             )}
-            aria-busy={isProcessing}
           >
             <div className="flex items-end gap-[var(--inkblot-spacing-2)] p-[var(--inkblot-spacing-2)]">
               <input
@@ -228,16 +252,15 @@ export function GlobalAssistantChat({
               </button>
 
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
                 rows={1}
-                disabled={isProcessing}
                 className={cn(
                   'min-h-[2.25rem] min-w-0 flex-1 resize-none border-0 bg-transparent py-[var(--inkblot-spacing-1)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]',
                   'focus:outline-none focus:ring-0',
-                  'disabled:cursor-not-allowed disabled:opacity-[var(--inkblot-opacity-disabled)]',
                 )}
               />
 
