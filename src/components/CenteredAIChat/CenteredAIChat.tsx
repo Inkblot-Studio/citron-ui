@@ -23,10 +23,12 @@ export interface CenteredAIChatComposePayload {
 
 export interface CenteredAIChatProps {
   messages?: CenteredAIChatMessage[]
-  onSend?: (content: string) => void
   /**
-   * Prefer this when you need text + files in one step. Files stay in a preview queue until send.
-   * When set, it is used on send instead of calling `onSend` / `onFilesAttach` separately.
+   * Igual que `GlobalAssistantChat` / `CenteredAssistantChat`: texto y archivos en un solo callback.
+   */
+  onSend?: (payload: { text: string; files: File[] }) => void
+  /**
+   * Si está definido, se usa al enviar en lugar de `onSend` (misma forma de payload).
    */
   onComposeSubmit?: (payload: CenteredAIChatComposePayload) => void
   isProcessing?: boolean
@@ -35,8 +37,8 @@ export interface CenteredAIChatProps {
   activeAgent?: string
   onAgentChange?: (agentId: string) => void
   /**
-   * Legacy: invoked when the user sends and there are pending attachments (after preview).
-   * Ignored if `onComposeSubmit` is provided.
+   * Solo si no hay `onSend` ni `onComposeSubmit`: se llama con los archivos al enviar (el texto no tiene destino).
+   * @deprecated Prefer `onSend` con `{ text, files }`.
    */
   onFilesAttach?: (files: File[]) => void
   onVoiceClick?: () => void
@@ -65,7 +67,8 @@ export function CenteredAIChat({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const canAttach = Boolean(onComposeSubmit ?? onFilesAttach)
+  /** Mismo criterio que `GlobalAssistantChat`: adjuntar siempre permitido salvo mientras procesa. */
+  const attachDisabled = isProcessing
 
   useEffect(() => {
     if (feedRef.current) {
@@ -113,11 +116,16 @@ export function CenteredAIChat({
   }
 
   const flushSend = (trimmed: string, files: File[]) => {
-    if (onComposeSubmit) {
-      onComposeSubmit({ text: trimmed, files })
-    } else {
-      if (trimmed) onSend?.(trimmed)
-      if (files.length > 0) onFilesAttach?.(files)
+    try {
+      if (onComposeSubmit) {
+        onComposeSubmit({ text: trimmed, files })
+      } else if (onSend) {
+        onSend({ text: trimmed, files })
+      } else if (files.length > 0) {
+        onFilesAttach?.(files)
+      }
+    } catch {
+      // Igual que GlobalAssistantChat: no romper la UI si el consumidor falla
     }
     clearAttachments()
     setInput('')
@@ -140,7 +148,7 @@ export function CenteredAIChat({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (!files?.length || !canAttach) {
+    if (!files?.length || attachDisabled) {
       e.target.value = ''
       return
     }
@@ -294,7 +302,7 @@ export function CenteredAIChat({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={isProcessing || !canAttach}
+                  disabled={attachDisabled}
                   className={cn(
                     'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
                     'hover:bg-[var(--inkblot-semantic-color-background-tertiary)] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
