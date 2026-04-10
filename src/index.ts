@@ -2,6 +2,7 @@
 export * from './components/GlobalAssistantChat'
 export * from './components/AssistantPanel'
 export * from './components/CenteredAssistantChat'
+export * from './components/CenteredAIChat'
 
 // ── Named component exports ─────────────────────────────────────────────────
 export { ActionButtons, EmailComposeActionButtons, type ActionButtonsProps, type ActionButtonItem } from './components/ActionButtons'
