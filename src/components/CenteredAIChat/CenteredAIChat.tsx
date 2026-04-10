@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react'
-import { ChevronDown, FileText, Loader2, Mic, Paperclip, Send, Sparkles, X } from 'lucide-react'
+import { ChevronDown, Loader2, Mic, Paperclip, Send, Sparkles } from 'lucide-react'
 import { cn } from '../../utils/cn'
+import { AttachmentPreviewRow, type PendingAttachment } from '../GlobalAssistantChat/AttachmentPreviewRow'
 
 export interface CenteredAIChatAgent {
   id: string
@@ -20,16 +21,8 @@ export interface CenteredAIChatComposePayload {
   files: File[]
 }
 
-interface PendingAttachmentItem {
-  id: string
-  file: File
-  kind: 'image' | 'file'
-  previewUrl?: string
-}
-
 export interface CenteredAIChatProps {
   messages?: CenteredAIChatMessage[]
-  /** Called with the trimmed message when the user sends (no pending files). */
   onSend?: (content: string) => void
   /**
    * Prefer this when you need text + files in one step. Files stay in a preview queue until send.
@@ -67,7 +60,7 @@ export function CenteredAIChat({
 }: CenteredAIChatProps) {
   const [input, setInput] = useState('')
   const [agentOpen, setAgentOpen] = useState(false)
-  const [pendingAttachments, setPendingAttachments] = useState<PendingAttachmentItem[]>([])
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([])
   const feedRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -91,31 +84,31 @@ export function CenteredAIChat({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [agentOpen])
 
-  const pendingRef = useRef(pendingAttachments)
-  pendingRef.current = pendingAttachments
+  const attachmentsRef = useRef(attachments)
+  attachmentsRef.current = attachments
 
   useEffect(() => {
     return () => {
-      pendingRef.current.forEach((p) => {
-        if (p.previewUrl) URL.revokeObjectURL(p.previewUrl)
+      attachmentsRef.current.forEach((a) => {
+        if (a.previewUrl) URL.revokeObjectURL(a.previewUrl)
       })
     }
   }, [])
 
-  const clearPendingAttachments = () => {
-    setPendingAttachments((prev) => {
-      prev.forEach((p) => {
-        if (p.previewUrl) URL.revokeObjectURL(p.previewUrl)
+  const clearAttachments = () => {
+    setAttachments((prev) => {
+      prev.forEach((a) => {
+        if (a.previewUrl) URL.revokeObjectURL(a.previewUrl)
       })
       return []
     })
   }
 
-  const removePendingAttachment = (id: string) => {
-    setPendingAttachments((prev) => {
-      const item = prev.find((p) => p.id === id)
-      if (item?.previewUrl) URL.revokeObjectURL(item.previewUrl)
-      return prev.filter((p) => p.id !== id)
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => {
+      const removed = prev[index]
+      if (removed?.previewUrl) URL.revokeObjectURL(removed.previewUrl)
+      return prev.filter((_, i) => i !== index)
     })
   }
 
@@ -126,14 +119,14 @@ export function CenteredAIChat({
       if (trimmed) onSend?.(trimmed)
       if (files.length > 0) onFilesAttach?.(files)
     }
-    clearPendingAttachments()
+    clearAttachments()
     setInput('')
   }
 
   const handleSend = () => {
     if (isProcessing) return
     const trimmed = input.trim()
-    const files = pendingAttachments.map((p) => p.file)
+    const files = attachments.map((a) => a.file)
     if (!trimmed && files.length === 0) return
     flushSend(trimmed, files)
   }
@@ -151,23 +144,22 @@ export function CenteredAIChat({
       e.target.value = ''
       return
     }
-    const next: PendingAttachmentItem[] = Array.from(files).map((file) => {
+    const next: PendingAttachment[] = Array.from(files).map((file) => {
       const isImage = file.type.startsWith('image/')
       return {
-        id: crypto.randomUUID(),
         file,
         kind: isImage ? 'image' : 'file',
         previewUrl: isImage ? URL.createObjectURL(file) : undefined,
       }
     })
-    setPendingAttachments((prev) => [...prev, ...next])
+    setAttachments((prev) => [...prev, ...next])
     e.target.value = ''
   }
 
   const selectedAgent = agents?.find((a) => a.id === activeAgent)
   const trimmedInput = input.trim()
-  const hasPending = pendingAttachments.length > 0
-  const canSubmit = !isProcessing && (Boolean(trimmedInput) || hasPending)
+  const hasAttachments = attachments.length > 0
+  const canSubmit = !isProcessing && (Boolean(trimmedInput) || hasAttachments)
 
   return (
     <div
@@ -227,48 +219,6 @@ export function CenteredAIChat({
               className="sr-only"
               aria-hidden
             />
-
-            {hasPending && (
-              <div className="flex flex-wrap gap-[var(--inkblot-spacing-2)] border-b border-[var(--inkblot-semantic-color-border-default)] px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)]">
-                {pendingAttachments.map((item) => (
-                  <div
-                    key={item.id}
-                    className="group relative shrink-0 rounded-[var(--inkblot-radius-md)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)]"
-                  >
-                    {item.kind === 'image' && item.previewUrl ? (
-                      <img
-                        src={item.previewUrl}
-                        alt=""
-                        className="h-16 w-16 rounded-[var(--inkblot-radius-md)] object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-16 max-w-[10rem] items-center gap-[var(--inkblot-spacing-2)] px-[var(--inkblot-spacing-2)] py-[var(--inkblot-spacing-1)]">
-                        <FileText
-                          size={20}
-                          strokeWidth={1.7}
-                          className="shrink-0 text-[var(--inkblot-semantic-color-text-tertiary)]"
-                          aria-hidden
-                        />
-                        <span className="truncate [font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-secondary)]">
-                          {item.file.name}
-                        </span>
-                      </div>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removePendingAttachment(item.id)}
-                      className={cn(
-                        'absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] text-[var(--inkblot-semantic-color-text-secondary)] shadow-[var(--inkblot-shadow-sm)]',
-                        'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] md:opacity-0 md:transition-opacity md:duration-[var(--inkblot-duration-fast)] md:group-hover:opacity-100'
-                      )}
-                      aria-label="Remove attachment"
-                    >
-                      <X size={12} strokeWidth={2} aria-hidden />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
 
             <textarea
               value={input}
@@ -400,6 +350,8 @@ export function CenteredAIChat({
                 </div>
               </div>
             </div>
+
+            <AttachmentPreviewRow attachments={attachments} onRemove={removeAttachment} />
           </div>
         </div>
       </div>
