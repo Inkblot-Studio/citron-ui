@@ -1,4 +1,5 @@
 import { FileText, X } from 'lucide-react'
+import { cn } from '../../utils/cn'
 
 export interface PendingAttachment {
   file: File
@@ -9,14 +10,21 @@ export interface PendingAttachment {
 export function AttachmentPreviewRow({
   attachments,
   onRemove,
+  className,
 }: {
   attachments: PendingAttachment[]
   onRemove: (index: number) => void
+  className?: string
 }) {
   if (attachments.length === 0) return null
 
   return (
-    <div className="flex flex-wrap gap-[var(--inkblot-spacing-2)] px-[var(--inkblot-spacing-2)] pb-[var(--inkblot-spacing-2)]">
+    <div
+      className={cn(
+        'flex flex-wrap gap-[var(--inkblot-spacing-2)] px-[var(--inkblot-spacing-3)] pb-[var(--inkblot-spacing-1)] pt-[var(--inkblot-spacing-3)]',
+        className,
+      )}
+    >
       {attachments.map((att, i) => (
         <div
           key={`${att.file.name}-${i}-${att.file.size}`}

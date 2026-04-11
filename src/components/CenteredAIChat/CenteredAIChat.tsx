@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react'
 import { ChevronDown, Loader2, Mic, Paperclip, Send, Sparkles } from 'lucide-react'
 import { cn } from '../../utils/cn'
+import { useAutosizeTextarea } from '../../hooks/useAutosizeTextarea'
 import { AttachmentPreviewRow, type PendingAttachment } from '../GlobalAssistantChat/AttachmentPreviewRow'
 
 export interface CenteredAIChatAgent {
@@ -24,11 +25,11 @@ export interface CenteredAIChatComposePayload {
 export interface CenteredAIChatProps {
   messages?: CenteredAIChatMessage[]
   /**
-   * Igual que `GlobalAssistantChat` / `CenteredAssistantChat`: texto y archivos en un solo callback.
+   * Same shape as `GlobalAssistantChat`: text and files in one callback.
    */
   onSend?: (payload: { text: string; files: File[] }) => void
   /**
-   * Si está definido, se usa al enviar en lugar de `onSend` (misma forma de payload).
+   * When set, used on submit instead of `onSend` (same payload shape).
    */
   onComposeSubmit?: (payload: CenteredAIChatComposePayload) => void
   isProcessing?: boolean
@@ -37,8 +38,8 @@ export interface CenteredAIChatProps {
   activeAgent?: string
   onAgentChange?: (agentId: string) => void
   /**
-   * Solo si no hay `onSend` ni `onComposeSubmit`: se llama con los archivos al enviar (el texto no tiene destino).
-   * @deprecated Prefer `onSend` con `{ text, files }`.
+   * Only if neither `onSend` nor `onComposeSubmit`: called with files on send (text has no handler).
+   * @deprecated Prefer `onSend` with `{ text, files }`.
    */
   onFilesAttach?: (files: File[]) => void
   onVoiceClick?: () => void
@@ -65,9 +66,12 @@ export function CenteredAIChat({
   const [attachments, setAttachments] = useState<PendingAttachment[]>([])
   const feedRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  /** Mismo criterio que `GlobalAssistantChat`: adjuntar siempre permitido salvo mientras procesa. */
+  useAutosizeTextarea(textareaRef, input, { disabled: isProcessing })
+
+  /** Same as `GlobalAssistantChat`: attach allowed unless processing. */
   const attachDisabled = isProcessing
 
   useEffect(() => {
@@ -125,10 +129,13 @@ export function CenteredAIChat({
         onFilesAttach?.(files)
       }
     } catch {
-      // Igual que GlobalAssistantChat: no romper la UI si el consumidor falla
+      // Same as GlobalAssistantChat: never break the UI if the consumer throws
     }
     clearAttachments()
     setInput('')
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus()
+    })
   }
 
   const handleSend = () => {
@@ -169,52 +176,63 @@ export function CenteredAIChat({
   const hasAttachments = attachments.length > 0
   const canSubmit = !isProcessing && (Boolean(trimmedInput) || hasAttachments)
 
+  const pageTintClass = 'bg-[#F9F9F7]'
+
   return (
-    <div
-      className={cn(
-        'flex h-full flex-col bg-[var(--inkblot-semantic-color-background-primary)]',
-        className
-      )}
-    >
+    <div className={cn('flex h-full flex-col', pageTintClass, className)}>
       {messages.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center">
-          <p className="[font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-tertiary)]">
+        <div className="flex min-h-0 flex-1 items-center justify-center px-[var(--inkblot-spacing-4)]">
+          <p className="text-center [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-tertiary)]">
             {emptyStateMessage}
           </p>
         </div>
       ) : (
-        <div ref={feedRef} className="flex-1 overflow-y-auto">
-          <div className="mx-auto flex max-w-3xl flex-col gap-[var(--inkblot-spacing-4)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-6)]">
-            {messages.map((msg) =>
-              msg.role === 'user' ? (
-                <div key={msg.id} className="flex justify-end">
-                  <div className="max-w-[80%] rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-interactive-primary)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-inverse)]">
-                    {msg.renderedContent ?? msg.content}
-                  </div>
-                </div>
-              ) : (
-                <div key={msg.id} className="flex items-start gap-[var(--inkblot-spacing-2)]">
-                  <Sparkles
-                    size={16}
-                    strokeWidth={1.7}
-                    className="mt-[var(--inkblot-spacing-1)] shrink-0 text-[var(--inkblot-semantic-color-text-tertiary)]"
-                    aria-hidden
-                  />
-                  <div className="max-w-[90%] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)]">
-                    {msg.renderedContent ?? msg.content}
-                  </div>
-                </div>
-              )
+        <div className="flex min-h-0 flex-1 flex-col px-[var(--inkblot-spacing-4)] pt-[var(--inkblot-spacing-4)]">
+          <div
+            className={cn(
+              'flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl',
+              'border border-[var(--inkblot-semantic-color-border-default)] bg-white shadow-[var(--inkblot-shadow-sm)]',
             )}
+          >
+            <div ref={feedRef} className="min-h-0 flex-1 overflow-y-auto">
+              <div className="mx-auto flex max-w-3xl flex-col gap-[var(--inkblot-spacing-4)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-6)]">
+                {messages.map((msg) =>
+                  msg.role === 'user' ? (
+                    <div key={msg.id} className="flex justify-end">
+                      <div className="max-w-[80%] rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-interactive-primary)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-inverse)]">
+                        {msg.renderedContent ?? msg.content}
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={msg.id} className="flex items-start gap-[var(--inkblot-spacing-2)]">
+                      <Sparkles
+                        size={16}
+                        strokeWidth={1.7}
+                        className="mt-[var(--inkblot-spacing-1)] shrink-0 text-[var(--inkblot-semantic-color-text-tertiary)]"
+                        aria-hidden
+                      />
+                      <div className="max-w-[90%] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)]">
+                        {msg.renderedContent ?? msg.content}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="shrink-0 bg-[var(--inkblot-semantic-color-background-primary)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)]">
+      <div
+        className={cn(
+          'shrink-0 px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)]',
+          pageTintClass,
+        )}
+      >
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-[var(--inkblot-spacing-2)]">
           <div
             className={cn(
-              'flex flex-col overflow-hidden rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] shadow-[var(--inkblot-shadow-sm)]',
+              'flex flex-col overflow-hidden rounded-3xl border border-[var(--inkblot-semantic-color-border-default)] bg-white shadow-[var(--inkblot-shadow-sm)]',
               isProcessing && 'pointer-events-none'
             )}
             aria-busy={isProcessing}
@@ -228,15 +246,19 @@ export function CenteredAIChat({
               aria-hidden
             />
 
+            <AttachmentPreviewRow attachments={attachments} onRemove={removeAttachment} />
+
+            {/* Auto-growing field: single-line height, not a multi-line textarea control */}
             <textarea
+              ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              rows={3}
+              rows={1}
               disabled={isProcessing}
               className={cn(
-                'min-h-[4.5rem] w-full resize-y border-0 bg-transparent px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]',
+                'min-h-[2.25rem] w-full resize-none border-0 bg-transparent px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]',
                 'focus:outline-none focus:ring-0',
                 'disabled:cursor-not-allowed disabled:opacity-50'
               )}
@@ -304,9 +326,9 @@ export function CenteredAIChat({
                   onClick={() => fileInputRef.current?.click()}
                   disabled={attachDisabled}
                   className={cn(
-                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
-                    'hover:bg-[var(--inkblot-semantic-color-background-tertiary)] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
-                    'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-secondary)]',
+                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[#F2F2EF] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
+                    'hover:bg-[#E8E8E4] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
+                    'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-white',
                     'disabled:pointer-events-none disabled:opacity-50'
                   )}
                   aria-label="Attach files"
@@ -319,9 +341,9 @@ export function CenteredAIChat({
                   onClick={() => onVoiceClick?.()}
                   disabled={isProcessing}
                   className={cn(
-                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
-                    'hover:bg-[var(--inkblot-semantic-color-background-tertiary)] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
-                    'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-secondary)]',
+                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[#F2F2EF] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
+                    'hover:bg-[#E8E8E4] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
+                    'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-white',
                     'disabled:pointer-events-none disabled:opacity-50'
                   )}
                   aria-label="Voice input"
@@ -345,9 +367,9 @@ export function CenteredAIChat({
                       onClick={handleSend}
                       disabled={!canSubmit}
                       className={cn(
-                        'flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-interactive-primary)] text-[var(--inkblot-semantic-color-text-inverse)] transition-[background,box-shadow] duration-[var(--inkblot-duration-fast)]',
-                        'hover:bg-[var(--inkblot-semantic-color-interactive-secondary-hover)]',
-                        'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-secondary)]',
+                        'flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[#E8DCC4] text-white transition-[background,box-shadow] duration-[var(--inkblot-duration-fast)]',
+                        'hover:bg-[#dccaa8]',
+                        'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-white',
                         'disabled:pointer-events-none disabled:opacity-40'
                       )}
                       aria-label="Send"
@@ -358,8 +380,6 @@ export function CenteredAIChat({
                 </div>
               </div>
             </div>
-
-            <AttachmentPreviewRow attachments={attachments} onRemove={removeAttachment} />
           </div>
         </div>
       </div>

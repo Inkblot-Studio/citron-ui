@@ -38,26 +38,46 @@ export function AssistantPanel({
   }, [open, close])
 
   const header = (
-    <div className="flex items-center justify-between border-b border-[var(--inkblot-semantic-color-border-default)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)]">
+    <header
+      className={cn(
+        'flex shrink-0 flex-col gap-3 border-b border-[var(--inkblot-semantic-color-border-default)]',
+        'bg-[var(--inkblot-semantic-color-background-primary)]',
+        'px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:px-6 md:py-4 lg:px-8',
+      )}
+    >
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-[var(--inkblot-semantic-color-text-primary)]">
+        <h1
+          className={cn(
+            'truncate text-base font-semibold tracking-tight text-[var(--inkblot-semantic-color-text-primary)]',
+            'sm:text-lg',
+          )}
+        >
           {title}
-        </p>
-        {subtitle && (
-          <p className="truncate text-xs text-[var(--inkblot-semantic-color-text-tertiary)]">
+        </h1>
+        {subtitle ? (
+          <p className="mt-0.5 text-[10px] leading-snug text-[var(--inkblot-semantic-color-text-tertiary)]">
             {subtitle}
           </p>
-        )}
+        ) : null}
       </div>
-      <button
-        type="button"
-        onClick={close}
-        className="ml-[var(--inkblot-spacing-2)] flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-md)] border border-[var(--inkblot-semantic-color-border-default)] text-[var(--inkblot-semantic-color-text-secondary)] transition-colors duration-[var(--inkblot-duration-fast)] hover:bg-[var(--inkblot-semantic-color-background-secondary)] hover:text-[var(--inkblot-semantic-color-text-primary)]"
-        aria-label="Close"
-      >
-        <X className="h-4 w-4" />
-      </button>
-    </div>
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 sm:justify-end">
+        <button
+          type="button"
+          onClick={close}
+          className={cn(
+            'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+            'border border-[var(--inkblot-semantic-color-border-default)]',
+            'bg-[var(--inkblot-semantic-color-background-secondary)] text-[var(--inkblot-semantic-color-text-secondary)]',
+            'transition-[background-color,color,border-color] duration-[var(--inkblot-duration-fast)]',
+            'hover:border-[var(--inkblot-semantic-color-border-strong)] hover:bg-[var(--inkblot-semantic-color-background-tertiary)] hover:text-[var(--inkblot-semantic-color-text-primary)]',
+            'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]',
+          )}
+          aria-label="Close"
+        >
+          <X className="h-4 w-4" strokeWidth={2} aria-hidden />
+        </button>
+      </div>
+    </header>
   )
 
   return (

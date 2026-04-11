@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react'
-import { Loader2, Paperclip, Send, Sparkles } from 'lucide-react'
+import { Loader2, Mic, Paperclip, Send, Sparkles } from 'lucide-react'
 import { cn } from '../../utils/cn'
+import { useAutosizeTextarea } from '../../hooks/useAutosizeTextarea'
 import { AttachmentPreviewRow, type PendingAttachment } from './AttachmentPreviewRow'
 
 export type { PendingAttachment } from './AttachmentPreviewRow'
@@ -18,6 +19,7 @@ export interface GlobalAssistantChatProps {
   isProcessing?: boolean
   placeholder?: string
   emptyStateMessage?: string
+  onVoiceClick?: () => void
   className?: string
 }
 
@@ -27,6 +29,7 @@ export function GlobalAssistantChat({
   isProcessing = false,
   placeholder = 'Ask Citron Intelligence...',
   emptyStateMessage = 'Ask anything — deals, contacts, forecasts...',
+  onVoiceClick,
   className,
 }: GlobalAssistantChatProps) {
   const [input, setInput] = useState('')
@@ -34,6 +37,8 @@ export function GlobalAssistantChat({
   const feedRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useAutosizeTextarea(textareaRef, input)
 
   useEffect(() => {
     if (feedRef.current) {
@@ -170,23 +175,39 @@ export function GlobalAssistantChat({
         </div>
       )}
 
-      {/* Input area — never disabled; isProcessing only prevents sending */}
-      <div className="shrink-0 border-t border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)]">
+      {/* Composer: no top border — separated from feed by background only */}
+      <div className="shrink-0 bg-[var(--inkblot-semantic-color-background-secondary)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-3)]">
         <div className="mx-auto max-w-4xl">
           <div
             className={cn(
-              'overflow-hidden rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] shadow-[var(--inkblot-shadow-sm)]',
+              'flex flex-col overflow-hidden rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] shadow-[var(--inkblot-shadow-sm)]',
             )}
           >
-            <div className="flex items-end gap-[var(--inkblot-spacing-2)] p-[var(--inkblot-spacing-2)]">
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                onChange={handleFileChange}
-                className="sr-only"
-                aria-hidden
-              />
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileChange}
+              className="sr-only"
+              aria-hidden
+            />
+
+            <AttachmentPreviewRow attachments={attachments} onRemove={removeAttachment} />
+
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              rows={1}
+              className={cn(
+                'min-h-[2.25rem] w-full resize-none border-0 bg-transparent px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]',
+                'focus:outline-none focus:ring-0',
+              )}
+            />
+
+            <div className="flex items-center justify-end gap-[var(--inkblot-spacing-2)] px-[var(--inkblot-spacing-2)] pb-[var(--inkblot-spacing-3)] pt-[var(--inkblot-spacing-1)]">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -202,20 +223,22 @@ export function GlobalAssistantChat({
                 <Paperclip size={18} strokeWidth={1.7} aria-hidden />
               </button>
 
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={placeholder}
-                rows={1}
+              <button
+                type="button"
+                onClick={() => onVoiceClick?.()}
+                disabled={isProcessing}
                 className={cn(
-                  'min-h-[2.25rem] min-w-0 flex-1 resize-none border-0 bg-transparent py-[var(--inkblot-spacing-1)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]',
-                  'focus:outline-none focus:ring-0',
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
+                  'hover:bg-[var(--inkblot-semantic-color-background-tertiary)] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
+                  'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]',
+                  'disabled:pointer-events-none disabled:opacity-[var(--inkblot-opacity-disabled)]',
                 )}
-              />
+                aria-label="Voice input"
+              >
+                <Mic size={18} strokeWidth={1.7} aria-hidden />
+              </button>
 
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center">
                 {isProcessing ? (
                   <div className="flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-interactive-primary)]">
                     <Loader2
@@ -230,8 +253,8 @@ export function GlobalAssistantChat({
                     type="button"
                     onClick={handleSend}
                     className={cn(
-                      'flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-interactive-primary)] text-[var(--inkblot-semantic-color-text-inverse)] transition-[background,box-shadow] duration-[var(--inkblot-duration-fast)]',
-                      'hover:bg-[var(--inkblot-semantic-color-interactive-primary-hover)]',
+                      'flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[#e2d5c0] text-white transition-[background,box-shadow] duration-[var(--inkblot-duration-fast)]',
+                      'hover:bg-[#d4c4ad]',
                       'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--inkblot-semantic-color-background-primary)]',
                     )}
                     aria-label="Send"
@@ -241,8 +264,6 @@ export function GlobalAssistantChat({
                 )}
               </div>
             </div>
-
-            <AttachmentPreviewRow attachments={attachments} onRemove={removeAttachment} />
           </div>
         </div>
       </div>
