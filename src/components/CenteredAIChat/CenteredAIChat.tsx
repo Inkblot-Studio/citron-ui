@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react'
 import { ChevronDown, Loader2, Mic, Paperclip, Send, Sparkles } from 'lucide-react'
 import { cn } from '../../utils/cn'
-import { useAutosizeTextarea } from '../../hooks/useAutosizeTextarea'
 import { AttachmentPreviewRow, type PendingAttachment } from '../GlobalAssistantChat/AttachmentPreviewRow'
 
 export interface CenteredAIChatAgent {
@@ -69,9 +68,7 @@ export function CenteredAIChat({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  useAutosizeTextarea(textareaRef, input, { disabled: isProcessing })
-
-  /** Same as `GlobalAssistantChat`: attach allowed unless processing. */
+  /** Attach is allowed unless a send is in flight (same rule as `GlobalAssistantChat`). */
   const attachDisabled = isProcessing
 
   useEffect(() => {
@@ -147,6 +144,10 @@ export function CenteredAIChat({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault()
+      return
+    }
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
@@ -229,26 +230,25 @@ export function CenteredAIChat({
           pageTintClass,
         )}
       >
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-[var(--inkblot-spacing-2)]">
-          <div
-            className={cn(
-              'flex flex-col overflow-hidden rounded-3xl border border-[var(--inkblot-semantic-color-border-default)] bg-white shadow-[var(--inkblot-shadow-sm)]',
-              isProcessing && 'pointer-events-none'
-            )}
-            aria-busy={isProcessing}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              className="sr-only"
-              aria-hidden
-            />
+        <div
+          className={cn(
+            'mx-auto flex w-full max-w-3xl flex-col gap-[var(--inkblot-spacing-2)]',
+            isProcessing && 'pointer-events-none',
+          )}
+          aria-busy={isProcessing}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            onChange={handleFileChange}
+            className="sr-only"
+            aria-hidden
+          />
 
+          <div className="flex flex-col overflow-hidden rounded-3xl border border-[var(--inkblot-semantic-color-border-default)] bg-white shadow-[var(--inkblot-shadow-sm)]">
             <AttachmentPreviewRow attachments={attachments} onRemove={removeAttachment} />
 
-            {/* Auto-growing field: single-line height, not a multi-line textarea control */}
             <textarea
               ref={textareaRef}
               value={input}
@@ -258,126 +258,129 @@ export function CenteredAIChat({
               rows={1}
               disabled={isProcessing}
               className={cn(
-                'min-h-[2.25rem] w-full resize-none border-0 bg-transparent px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]',
+                'h-10 min-h-10 max-h-10 w-full resize-none overflow-x-auto overflow-y-hidden whitespace-nowrap border-0 bg-transparent px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-default)] text-[var(--inkblot-semantic-color-text-primary)] placeholder:text-[var(--inkblot-semantic-color-text-tertiary)]',
                 'focus:outline-none focus:ring-0',
-                'disabled:cursor-not-allowed disabled:opacity-50'
+                'disabled:cursor-not-allowed disabled:opacity-50',
               )}
             />
+          </div>
 
-            <div
-              className={cn(
-                'flex items-center gap-[var(--inkblot-spacing-2)] px-[var(--inkblot-spacing-2)] pb-[var(--inkblot-spacing-2)] pt-[var(--inkblot-spacing-1)]',
-                agents && agents.length > 0 ? 'justify-between' : 'justify-end'
-              )}
-            >
-              {agents && agents.length > 0 && (
-                <div ref={dropdownRef} className="relative min-w-0">
-                  <button
-                    type="button"
-                    onClick={() => setAgentOpen((o) => !o)}
+          <div
+            className={cn(
+              'flex items-center gap-[var(--inkblot-spacing-2)] pt-[var(--inkblot-spacing-1)]',
+              agents && agents.length > 0 ? 'justify-between' : 'justify-end',
+            )}
+          >
+            {agents && agents.length > 0 && (
+              <div ref={dropdownRef} className="relative min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setAgentOpen((o) => !o)}
+                  className={cn(
+                    'flex max-w-full items-center gap-[var(--inkblot-spacing-1)] rounded-[var(--inkblot-radius-md)] px-[var(--inkblot-spacing-2)] py-[var(--inkblot-spacing-1)] [font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-secondary)] transition-colors duration-[var(--inkblot-duration-fast)]',
+                    'hover:bg-[var(--inkblot-semantic-color-background-tertiary)] hover:text-[var(--inkblot-semantic-color-text-primary)]',
+                  )}
+                >
+                  <Sparkles size={14} strokeWidth={1.7} aria-hidden />
+                  <span className="truncate">{selectedAgent?.label ?? 'Select agent'}</span>
+                  <ChevronDown
+                    size={14}
+                    strokeWidth={1.7}
                     className={cn(
-                      'flex max-w-full items-center gap-[var(--inkblot-spacing-1)] rounded-[var(--inkblot-radius-md)] px-[var(--inkblot-spacing-2)] py-[var(--inkblot-spacing-1)] [font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-secondary)] transition-colors duration-[var(--inkblot-duration-fast)]',
-                      'hover:bg-[var(--inkblot-semantic-color-background-tertiary)] hover:text-[var(--inkblot-semantic-color-text-primary)]'
+                      'shrink-0 transition-transform duration-[var(--inkblot-duration-fast)]',
+                      agentOpen && 'rotate-180',
                     )}
-                  >
-                    <Sparkles size={14} strokeWidth={1.7} aria-hidden />
-                    <span className="truncate">{selectedAgent?.label ?? 'Select agent'}</span>
-                    <ChevronDown
-                      size={14}
-                      strokeWidth={1.7}
-                      className={cn('shrink-0 transition-transform duration-[var(--inkblot-duration-fast)]', agentOpen && 'rotate-180')}
+                    aria-hidden
+                  />
+                </button>
+
+                {agentOpen && (
+                  <div className="absolute bottom-full left-0 z-10 mb-[var(--inkblot-spacing-1)] min-w-[12rem] rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-[var(--inkblot-spacing-1)] shadow-[var(--inkblot-shadow-sm)]">
+                    {agents.map((agent) => (
+                      <button
+                        key={agent.id}
+                        type="button"
+                        onClick={() => {
+                          onAgentChange?.(agent.id)
+                          setAgentOpen(false)
+                        }}
+                        className={cn(
+                          'flex w-full flex-col gap-0.5 rounded-[var(--inkblot-radius-md)] px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] text-left transition-colors duration-[var(--inkblot-duration-fast)]',
+                          agent.id === activeAgent
+                            ? 'bg-[var(--inkblot-semantic-color-background-tertiary)] text-[var(--inkblot-semantic-color-text-primary)]'
+                            : 'text-[var(--inkblot-semantic-color-text-secondary)] hover:bg-[var(--inkblot-semantic-color-interactive-secondary-hover)]',
+                        )}
+                      >
+                        <span className="[font:var(--inkblot-semantic-typography-body-small)]">{agent.label}</span>
+                        {agent.description && (
+                          <span className="[font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-tertiary)]">
+                            {agent.description}
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex shrink-0 items-center gap-[var(--inkblot-spacing-2)]">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={attachDisabled}
+                className={cn(
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[#F2F2EF] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
+                  'hover:bg-[#E8E8E4] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
+                  'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[#F9F9F7]',
+                  'disabled:pointer-events-none disabled:opacity-50',
+                )}
+                aria-label="Attach files"
+              >
+                <Paperclip size={18} strokeWidth={1.7} aria-hidden />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onVoiceClick?.()}
+                disabled={isProcessing}
+                className={cn(
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[#F2F2EF] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
+                  'hover:bg-[#E8E8E4] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
+                  'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[#F9F9F7]',
+                  'disabled:pointer-events-none disabled:opacity-50',
+                )}
+                aria-label="Voice input"
+              >
+                <Mic size={18} strokeWidth={1.7} aria-hidden />
+              </button>
+
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+                {isProcessing ? (
+                  <div className="flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-interactive-primary)]">
+                    <Loader2
+                      size={16}
+                      strokeWidth={2}
+                      className="animate-spin text-[var(--inkblot-semantic-color-text-inverse)]"
                       aria-hidden
                     />
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSend}
+                    disabled={!canSubmit}
+                    className={cn(
+                      'flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[#E8DCC4] text-white transition-[background,box-shadow] duration-[var(--inkblot-duration-fast)]',
+                      'hover:bg-[#dccaa8]',
+                      'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-[#F9F9F7]',
+                      'disabled:pointer-events-none disabled:opacity-40',
+                    )}
+                    aria-label="Send"
+                  >
+                    <Send size={16} strokeWidth={2} aria-hidden />
                   </button>
-
-                  {agentOpen && (
-                    <div className="absolute bottom-full left-0 z-10 mb-[var(--inkblot-spacing-1)] min-w-[12rem] rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-[var(--inkblot-spacing-1)] shadow-[var(--inkblot-shadow-sm)]">
-                      {agents.map((agent) => (
-                        <button
-                          key={agent.id}
-                          type="button"
-                          onClick={() => {
-                            onAgentChange?.(agent.id)
-                            setAgentOpen(false)
-                          }}
-                          className={cn(
-                            'flex w-full flex-col gap-0.5 rounded-[var(--inkblot-radius-md)] px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] text-left transition-colors duration-[var(--inkblot-duration-fast)]',
-                            agent.id === activeAgent
-                              ? 'bg-[var(--inkblot-semantic-color-background-tertiary)] text-[var(--inkblot-semantic-color-text-primary)]'
-                              : 'text-[var(--inkblot-semantic-color-text-secondary)] hover:bg-[var(--inkblot-semantic-color-interactive-secondary-hover)]'
-                          )}
-                        >
-                          <span className="[font:var(--inkblot-semantic-typography-body-small)]">{agent.label}</span>
-                          {agent.description && (
-                            <span className="[font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-tertiary)]">
-                              {agent.description}
-                            </span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="flex shrink-0 items-center gap-[var(--inkblot-spacing-2)]">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={attachDisabled}
-                  className={cn(
-                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[#F2F2EF] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
-                    'hover:bg-[#E8E8E4] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
-                    'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-white',
-                    'disabled:pointer-events-none disabled:opacity-50'
-                  )}
-                  aria-label="Attach files"
-                >
-                  <Paperclip size={18} strokeWidth={1.7} aria-hidden />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => onVoiceClick?.()}
-                  disabled={isProcessing}
-                  className={cn(
-                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--inkblot-radius-full)] border border-[var(--inkblot-semantic-color-border-default)] bg-[#F2F2EF] text-[var(--inkblot-semantic-color-text-tertiary)] transition-[background,border-color,color] duration-[var(--inkblot-duration-fast)]',
-                    'hover:bg-[#E8E8E4] hover:text-[var(--inkblot-semantic-color-text-secondary)]',
-                    'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-white',
-                    'disabled:pointer-events-none disabled:opacity-50'
-                  )}
-                  aria-label="Voice input"
-                >
-                  <Mic size={18} strokeWidth={1.7} aria-hidden />
-                </button>
-
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center">
-                  {isProcessing ? (
-                    <div className="flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[var(--inkblot-semantic-color-interactive-primary)]">
-                      <Loader2
-                        size={16}
-                        strokeWidth={2}
-                        className="animate-spin text-[var(--inkblot-semantic-color-text-inverse)]"
-                        aria-hidden
-                      />
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleSend}
-                      disabled={!canSubmit}
-                      className={cn(
-                        'flex h-full w-full items-center justify-center rounded-[var(--inkblot-radius-full)] bg-[#E8DCC4] text-white transition-[background,box-shadow] duration-[var(--inkblot-duration-fast)]',
-                        'hover:bg-[#dccaa8]',
-                        'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)] focus:ring-offset-2 focus:ring-offset-white',
-                        'disabled:pointer-events-none disabled:opacity-40'
-                      )}
-                      aria-label="Send"
-                    >
-                      <Send size={16} strokeWidth={2} aria-hidden />
-                    </button>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           </div>
